@@ -1,0 +1,118 @@
+<div class="row clearfix">
+    <div class="col-12">
+            <form class="card" action="/project/commit" method="POST">
+                <div class="card-body">
+                    <h3 class="card-title">新增项目</h3>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">名称</label>
+                                <input name="Name" type="text" class="form-control"  placeholder="project name..." value="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">环境</label>
+                                <select name="Level" class="custom-select">
+                                    <option value="" selected="">选择环境</option>
+                                    <option value="1">开发环境</option>
+                                    <option value="2">测试环境</option>
+                                    <option value="3">生产环境</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">git地址</label>
+                                <input name="RepoUrl" type="text" class="form-control" placeholder="http://uername:password@git.***">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">本地仓库路径</label>
+                                <input name="DeployFrom" type="text" class="form-control"  placeholder="repos/***" value="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">远程仓库路径</label>
+                                <input name="ReleaseLibrary" type="text" class="form-control" placeholder="/home/wwwbak/" value="">
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-6">
+                            <div class="form-group">
+                                <label class="form-label">远程代码路径</label>
+                                <input name="ReleaseTo" type="text" class="form-control" placeholder="/home/wwwdoc/">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">版本保留数</label>
+                                <input name="KeepVersionNum" type="text" class="form-control" placeholder="20" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">分之tag上线</label>
+                                <div class="custom-controls-stacked">
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" name="RepoMode" value="branch" checked="">
+                                        <span class="custom-control-label">branch</span>
+                                    </label>
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" name="RepoMode" value="tag">
+                                        <span class="custom-control-label">tag</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">开启审核</label>
+                                <div class="custom-controls-stacked">
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" name="Audit" value="1" checked="">
+                                        <span class="custom-control-label">启用</span>
+                                    </label>
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" name="Audit" value="0">
+                                        <span class="custom-control-label">禁用</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="form-label">是否启用</label>
+                                <div class="custom-controls-stacked">
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" name="Status" value="1" checked="">
+                                        <span class="custom-control-label">启用</span>
+                                    </label>
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input type="radio" class="custom-control-input" name="Status" value="0">
+                                        <span class="custom-control-label">禁用</span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-0">
+                                <label class="form-label">机器列表</label>
+                                <textarea name="Hosts" rows="5" class="form-control" placeholder="192.168.1.1:22,192.168.1.2:23" value=""></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group mb-0">
+                                <label class="form-label">发布后任务</label>
+                                <textarea name="PostRelease" rows="5" class="form-control" placeholder="systemctl restart supervisord" value=""></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-right">
+                    <button type="submit" class="btn btn-primary">提交</button>
+                </div>
+            </form>
+    </div>
+</div>

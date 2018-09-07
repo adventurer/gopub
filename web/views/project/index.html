@@ -1,0 +1,117 @@
+<div class="row clearfix">
+    <div class="col-12">
+        <form class="card" action="">
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="form-group col-auto">
+                        <select class="custom-select">
+                            <option value="GET">选择项目</option>
+                            {{range $k,$v := .project}}
+                            <option value="{{$v.Id}}">{{$v.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group col-8">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search for...">
+                            <span class="input-group-append"><button class="btn btn-primary" type="button">Go!</button></span>
+                        </div>
+                    </div>
+                    <div class="form-group col-auto">
+                        <a href="/project/new" class="btn btn-sm btn-primary">新增项目</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+
+<div class="row clearfix">
+    <div class="col-12">
+
+
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>环境</th>
+                                <th>项目</th>
+                                <th>主机&版本</th>
+                                <th>主机路径</th>
+                                <th>本地仓库路径</th>
+                                <th>开启审核</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{range $k,$v := .project}}
+                            <tr>
+                                <td>
+                                    {{if eq $v.Level 1}}
+                                    <span class="text-green"><i class="fa fa fa-eercast fa-2x"></i></span>
+                                    {{else if eq $v.Level 2}}
+                                    <span class="text-orange"><i class="fa fa fa-eercast fa-2x"></i></span>
+                                    {{else if eq $v.Level 3}}
+                                    <span class="text-red"><i class="fa fa fa-eercast fa-2x"></i></span>
+                                    {{end}}
+                                </td>
+                                <td>
+                                    <h6 class="margin-0">{{$v.Name}}</h6>
+                                    <span>{{$v.CreatedAt}}</span>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0">{{$v.Hosts}}</h6>
+                                    <span class="text-muted">{{$v.Version}}</span>
+                                </td>
+                                <td>
+                                    <h6 class="mb-0"><span class="badge badge-success">部署</span>{{$v.ReleaseTo}}</h6>
+                                    <h6 class="mb-0"><span class="badge badge-success">仓库</span>{{$v.ReleaseLibrary}}</h6>
+                                </td>
+                                <td class="">
+                                        {{$v.DeployFrom}}
+                                </td>
+                                <td class="">
+                                    {{$v.Audit}}
+                                </td>
+                                <td>
+                                    <a href="javascript:;" onclick="projectInit('{{$v.Id}}')" ><span class="badge badge-danger">初始化</span></a> 
+                                    <a href="/project/edit?id={{$v.Id}}"><span class="badge badge-primary">编辑</span></a> 
+                                    <a href="/project/del?id={{$v.Id}}"><span class="badge badge-primary">删除</span></a> 
+                                    <a href="/project/copy?id={{$v.Id}}"><span class="badge badge-primary">复制</span></a> 
+                                    <a href="/version/ctl?id={{$v.Id}}"><span class="badge badge-primary">版本</span></a>
+                                </td>
+                            </tr>
+                            {{end}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+function projectInit(id) {
+    if (confirm("确定初始化？")) {
+            $.ajax({
+                type: "GET",
+                url: "/project/init",
+                data: {
+                    id: id
+                },
+                dataType: "html",
+                success: function (data) {
+                    alert(data)
+                }
+            });
+        }
+}
+</script>
