@@ -13,6 +13,11 @@ var (
 )
 
 func (r *Routes) InitRoute(app *iris.Application) {
+
+	app.Get("/", func(ctx iris.Context) {
+		ctx.Redirect("/user/login", 302)
+	})
+
 	app.Get("/user/login", func(ctx iris.Context) {
 		ctx.ViewLayout(iris.NoLayout)
 		ctx.View("user/login.html")
