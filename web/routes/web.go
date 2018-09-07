@@ -37,6 +37,16 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 		adminRoutes.Any("/task/deploy", controller.TaskDeploy)
 
+		adminRoutes.Any("/task/choose", controller.TaskChoose)
+
+		adminRoutes.Any("/task/new", controller.TaskNew)
+
+		adminRoutes.Any("/task/commit", controller.TaskNewCommit)
+
+		adminRoutes.Any("/task/filearea", controller.TaskCommitLog)
+
+		adminRoutes.Any("/task/del", controller.TaskDel)
+
 		adminRoutes.Any("/project/index", controller.AdminCheck, controller.ProjectIndex)
 
 		adminRoutes.Any("/project/copy", controller.AdminCheck, controller.ProjectCopy)

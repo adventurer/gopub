@@ -7,11 +7,14 @@ import (
 	"gopub/command"
 	"gopub/models"
 	"gopub/tools"
+	"gopub/web/session"
 	"gopub/websocket"
+	"log"
 	"os"
 	"path"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/kataras/iris"
 )
@@ -58,6 +61,159 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 	ctx.ViewData("page2", page+1)
 	ctx.ViewData("id", projectID)
 	ctx.View("task/index.html")
+}
+
+// 新任务页面
+func (c *DefauleController) TaskNew(ctx iris.Context) {
+	id := ctx.URLParam("id")
+
+	t := new(models.Task)
+	task, err := t.FindUndo(id)
+	if err != nil {
+		ctx.WriteString(fmt.Sprintf("%s", err))
+	}
+
+	if task.Id > 0 {
+		ctx.WriteString(fmt.Sprintf("存在未提交的项目，先提交或删除%d", task.Id))
+		return
+	}
+
+	t1 := new(models.Project)
+	project, err := t1.Find(id)
+	if err != nil {
+		ctx.WriteString(fmt.Sprintf("%s", err))
+		return
+	}
+
+	s := session.Sess.Start(ctx)
+	userRole, err := s.GetInt("user_role")
+	if err != nil {
+		ctx.Write([]byte(fmt.Sprintf("%s", err)))
+		return
+	}
+	if userRole != 2 && project.Level == 3 {
+		ctx.WriteString("只有管理员能创建线上环境")
+		return
+	}
+
+	command := new(command.Command)
+
+	_, err = command.LocalCommandOutput("ls " + project.DeployFrom)
+	if err != nil {
+		ctx.WriteString(fmt.Sprintf("不存在本地项目目录，需要初始化"))
+		log.Println(err)
+		return
+	}
+
+	_, err = command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git pull")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	branchList, err := command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git branch -a")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// fmt.Printf("%q", branchList)
+	branchListArr := strings.Split((strings.TrimSpace(string(branchList))), "\n")
+
+	logList, err := command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git log -20 --pretty=\"%h - %an - %s - %cD\"")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	_, err = command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git pull")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// fmt.Printf("%q", logList)
+	logListtArr := strings.Split((strings.TrimSpace(string(logList))), "\n")
+
+	ctx.ViewData("branchList", branchListArr)
+	ctx.ViewData("logList", logListtArr)
+	ctx.ViewData("project", project)
+	ctx.ViewData("taskId", id)
+	ctx.View("task/new.html")
+}
+
+func (c *DefauleController) TaskChoose(ctx iris.Context) {
+	p := models.Project{}
+	list := p.List()
+	ctx.ViewData("list", list)
+	ctx.View("task/choose.html")
+}
+
+// 查询版本记录
+func (c *DefauleController) TaskCommitLog(ctx iris.Context) {
+	params := ctx.FormValues()
+
+	commit := params["commit"][0]
+	id := params["task"][0]
+	commit = commit[:7]
+
+	t1 := new(models.Project)
+	project, err := t1.Find(id)
+	if err != nil {
+		ctx.WriteString(fmt.Sprintf("%s", err))
+		return
+	}
+
+	command := new(command.Command)
+	output, err := command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git log -1 " + commit + " --name-only")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	ctx.WriteString(string(output))
+}
+
+// 新任务添加
+func (c *DefauleController) TaskNewCommit(ctx iris.Context) {
+	task := models.Task{}
+	err := ctx.ReadForm(&task)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	task.CommitId = task.CommitId[:7]
+
+	s := session.Sess.Start(ctx)
+	userID, err := s.GetInt("user_id")
+	if err != nil {
+		ctx.Write([]byte(fmt.Sprintf("%s", err)))
+		return
+	}
+	task.UserId = userID
+	task.EnableRollback = 1
+	task.CreatedAt = time.Now()
+	task.UpdatedAt = time.Now()
+
+	t := new(models.Task)
+	lastRecord := t.FindLast(task.ProjectId)
+	task.LinkId = time.Now().Format("20060102-150405")
+	task.ExLinkId = lastRecord.LinkId
+	_, err = t.New(task)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	ctx.Redirect("/task/index", 302)
+}
+
+// 删除提交
+func (c *DefauleController) TaskDel(ctx iris.Context) {
+	taskID, err := ctx.URLParamInt("id")
+	if err != nil {
+		ctx.WriteString("need taskid")
+		return
+	}
+	t := models.Task{Id: taskID}
+	t.Del()
+	ctx.Redirect("/task/index", 302)
 }
 
 // 部署动作

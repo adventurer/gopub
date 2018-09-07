@@ -1,0 +1,79 @@
+<div class="row clearfix">
+    <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                <h3 class="card-title">创建上线单</h3>
+                </div>
+                <div class="card-body">
+                    <form action="/task/commit" method="POST">
+                        <input name="ProjectId" type="text" value="{{.taskId}}" hidden>
+                        <div class="row">
+                            <div class="col-auto">
+                                <img class="avatar avatar-xl" src="../assets/images/sm/avatar2.jpg" alt="">
+                            </div>
+                            <div class="col">
+                                <div class="form-group">
+                                    <label class="form-label">上线单标题</label>
+                                    <input name="Title" class="form-control" placeholder="来个容易识别的呗">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">待上线文件列表</label>
+                            <div class="form-group">
+                                <div class="custom-controls-stacked">
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input name="FileTransmissionMode" type="radio" class="custom-control-input" value="2" checked="">
+                                        <span class="custom-control-label">列表</span>
+                                    </label>
+                                    <label class="custom-control custom-radio custom-control-inline">
+                                        <input name="FileTransmissionMode" type="radio" class="custom-control-input" value="1">
+                                        <span class="custom-control-label">全量</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <textarea id="filearea" name="FileList" class="form-control" rows="10"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">选择分支</label>
+                            <div class="input-group mb-3">
+                                <select name="Branch" class="custom-select" id="inputGroupSelect01">
+                                {{range $k,$v := .branchList}}
+                                    <option value="{{$v}}">{{$v}}</option>
+                                {{end}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">选择版本</label>
+                            <div class="input-group mb-3">
+                                <select name="CommitId" onchange="commitList(this)" class="custom-select" id="inputGroupSelect02">
+                                    {{range $k,$v := .logList}}
+                                    <option  value="{{$v}}">{{$v}}</option>
+                                    {{end}}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-footer">
+                            <button class="btn btn-primary btn-block" type="submit">提交</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </div>
+</div>
+
+<script>
+function commitList(e){
+    $.ajax({
+        type: "post",
+        url: "/task/filearea",
+        data: {commit:$(e).val(), task:'{{.taskId}}'},
+        dataType: "text",
+        success: function(data){
+            console.log(data)
+            $("#filearea").val(data)
+        }
+    });
+}
+</script>

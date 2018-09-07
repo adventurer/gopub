@@ -1,0 +1,14 @@
+<div class="row clearfix mt-3">
+    {{range $k,$v := .list}}
+        <div class="col-lg-3 col-md-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><span class="text-{{if eq $v.Level 1}}green{{else if eq $v.Level 2}}orange{{else if eq $v.Level 3}}red{{end}}"><i class="fa fa fa-eercast"></i></span>{{$v.Name}}</h5>
+                    <p class="card-text">{{$v.Hosts}}</p>
+                    <a href="/task/new?id={{$v.Id}}" class="btn btn-primary">选择</a>
+                </div>
+            </div>
+        </div>
+    {{end}}
+        
+</div>
