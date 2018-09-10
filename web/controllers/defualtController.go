@@ -22,13 +22,10 @@ func (c *DefauleController) SessionInit(ctx iris.Context) {
 func (c *DefauleController) LoginCheck(ctx iris.Context) {
 	s := session.Sess.Start(ctx)
 	userid, err := s.GetInt("user_id")
-	if err != nil {
-		ctx.WriteString("load sesson err")
-		return
-	}
-	if userid <= 0 {
+	if err != nil || userid <= 0 {
 		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("message", "需要登陆")
+		ctx.ViewData("title", "需要登陆")
+		ctx.ViewData("message", err.Error())
 		ctx.ViewData("url", `/user/login`)
 		ctx.View("error/401.html")
 		return
@@ -53,7 +50,8 @@ func (c *DefauleController) AdminCheck(ctx iris.Context) {
 	}
 	if userRole != 2 {
 		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("message", "需要管理员身份")
+		ctx.ViewData("title", "需要管理员身份")
+		ctx.ViewData("message", "没有获得授权")
 		ctx.ViewData("url", ctx.Request().Referer())
 		ctx.View("error/401.html")
 		return
