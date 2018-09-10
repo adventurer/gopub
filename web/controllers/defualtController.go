@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"fmt"
 	"gopub/web/session"
 
 	"github.com/kataras/iris"
@@ -25,7 +26,7 @@ func (c *DefauleController) LoginCheck(ctx iris.Context) {
 	if err != nil || userid <= 0 {
 		ctx.ViewLayout(iris.NoLayout)
 		ctx.ViewData("title", "需要登陆")
-		ctx.ViewData("message", err.Error())
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
 		ctx.ViewData("url", `/user/login`)
 		ctx.View("error/401.html")
 		return
