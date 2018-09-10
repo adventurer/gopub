@@ -34,6 +34,11 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 	app.Get("/user/logout", controller.UserLogout)
 
+	app.Get("/401", func(ctx iris.Context) {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.View("error/401.html")
+	})
+
 	adminRoutes := app.Party("/", controller.SessionInit, controller.LoginCheck)
 	{
 		adminRoutes.Any("/welcome", controller.Welcome)

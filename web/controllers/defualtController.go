@@ -14,6 +14,7 @@ type DefauleController struct {
 // 保持登陆
 func (c *DefauleController) SessionInit(ctx iris.Context) {
 	c.Sess = session.Sess.Start(ctx)
+	ctx.Header("Cache-Control", "no-store")
 	ctx.Next()
 }
 
@@ -26,7 +27,10 @@ func (c *DefauleController) LoginCheck(ctx iris.Context) {
 		return
 	}
 	if userid <= 0 {
-		ctx.WriteString("need login")
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("message", "需要登陆")
+		ctx.ViewData("url", `/user/login`)
+		ctx.View("error/401.html")
 		return
 	}
 	userrole := s.Get("user_role")
@@ -48,7 +52,10 @@ func (c *DefauleController) AdminCheck(ctx iris.Context) {
 		return
 	}
 	if userRole != 2 {
-		ctx.WriteString("access only admin")
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("message", "需要管理员身份")
+		ctx.ViewData("url", ctx.Request().Referer())
+		ctx.View("error/401.html")
 		return
 	}
 	ctx.Next()
