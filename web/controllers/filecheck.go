@@ -66,7 +66,11 @@ func (c *DefauleController) FileIndex(ctx iris.Context) {
 		cmd := "cat " + project.ReleaseTo + path.Base(project.DeployFrom) + "/" + form.File
 		output, err := remoteEnv.RemoteCommandOutput(cmd)
 		if err != nil {
-			ctx.WriteString(fmt.Sprintf("%s", err))
+			ctx.ViewLayout(iris.NoLayout)
+			ctx.ViewData("title", "文件路径不对或者我特么也不知道咋了。。。。。")
+			ctx.ViewData("message", fmt.Sprintf("%s", err))
+			ctx.ViewData("url", ctx.Request().Referer())
+			ctx.View("error/401.html")
 			return
 		}
 		re := fileCheckOut{Ip: v, Output: output}
