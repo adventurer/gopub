@@ -14,6 +14,7 @@ var (
 
 func (r *Routes) InitRoute(app *iris.Application) {
 
+	// 用户处理
 	app.Get("/", func(ctx iris.Context) {
 		ctx.Redirect("/user/login", 302)
 	})
@@ -41,6 +42,7 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 	adminRoutes := app.Party("/", controller.SessionInit, controller.LoginCheck)
 	{
+		// 任务处理
 		adminRoutes.Any("/welcome", controller.Welcome)
 
 		adminRoutes.Any("/task/index", controller.TaskIndex)
@@ -57,6 +59,10 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 		adminRoutes.Any("/task/del", controller.TaskDel)
 
+		// 文件检查
+		adminRoutes.Any("/filecheck/index", controller.FileIndex)
+
+		// 项目管理
 		adminRoutes.Any("/project/index", controller.AdminCheck, controller.ProjectIndex)
 
 		adminRoutes.Any("/project/copy", controller.AdminCheck, controller.ProjectCopy)
