@@ -105,15 +105,12 @@
                             </td>
                             <td>
                                 {{if eq $v.Task.Status 3}}
+                                <i class="fa fa-thumbs-up" data-toggle="tooltip" title="" data-original-title="搞定"></i>
                                 {{else}}
-                                <a href="javascript:;" onclick="taskDeploy('{{$v.Task.Id}}')" >
-                                        <i class="fa fa-cloud-upload fa-2x" data-toggle="tooltip" title="" data-original-title="部署"></i>
-                                </a>
-                                
-                                <a href="/task/del?id={{$v.Task.Id}}">
-                                    <i onclick="log(0)" class="fa fa-trash-o fa-2x" data-toggle="tooltip" title="" data-original-title="删除"></i>
-                                </a>
+                                <button onclick="taskDeploy('{{$v.Task.Id}}')" type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-paper-plane"></i></button>
+                                <a href="/task/del?id={{$v.Task.Id}}"><button type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-trash-o"></i></button></a>
                                 {{end}}
+                                
                             </td>
                         </tr>
                         {{end}}
