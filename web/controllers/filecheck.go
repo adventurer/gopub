@@ -26,6 +26,7 @@ func (c *DefauleController) FileIndex(ctx iris.Context) {
 	m := new(models.Project)
 	list := m.List()
 	ctx.ViewData("project", list)
+	ctx.ViewData("id", 0)
 
 	if ctx.Method() == "GET" {
 		ctx.View("filecheck/index.html")
