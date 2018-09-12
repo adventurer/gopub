@@ -63,8 +63,9 @@ func (r *Routes) InitRoute(app *iris.Application) {
 		adminRoutes.Any("/filecheck/index", controller.FileIndex)
 
 		// 版本切换
-		adminRoutes.Any("/version/index", controller.VersionIndex)
-		adminRoutes.Any("/version/switch", controller.VersionSwitch)
+		adminRoutes.Any("/version/index", controller.AdminCheck, controller.VersionIndex)
+
+		adminRoutes.Any("/version/switch", controller.AdminCheck, controller.VersionSwitch)
 
 		// 项目管理
 		adminRoutes.Any("/project/index", controller.AdminCheck, controller.ProjectIndex)
