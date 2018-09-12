@@ -62,6 +62,10 @@ func (r *Routes) InitRoute(app *iris.Application) {
 		// 文件检查
 		adminRoutes.Any("/filecheck/index", controller.FileIndex)
 
+		// 版本切换
+		adminRoutes.Any("/version/index", controller.VersionIndex)
+		adminRoutes.Any("/version/switch", controller.VersionSwitch)
+
 		// 项目管理
 		adminRoutes.Any("/project/index", controller.AdminCheck, controller.ProjectIndex)
 

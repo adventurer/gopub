@@ -112,9 +112,9 @@ type Health struct {
 }
 
 type Version struct {
-	Id     string
-	Active int
-	Task   Task
+	Id     string `版本号`
+	Active int    `是否激活`
+	Task   Task   `版本上线单`
 }
 
 type BasicReturn struct {

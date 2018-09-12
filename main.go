@@ -5,14 +5,18 @@ import (
 	"gopub/web/routes"
 	"gopub/websocket"
 	"log"
+	"os"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
 )
 
 var App = iris.New()
+var FILES []string
 
 func main() {
+	// log.Println(fileList("repos/waikuai.com/App"))
+	// os.Exit(1)
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
@@ -78,4 +82,38 @@ func cmd(host, user string, port int) {
 		}
 
 	}
+}
+
+func fileList(file string) (files []string) {
+	f, err := os.Open(file)
+	if err != nil {
+		log.Println("00000", err)
+		return
+	}
+
+	fInfo, err := f.Stat()
+	if err != nil {
+		log.Println("1", err)
+		return
+	}
+	if fInfo.IsDir() {
+		list, err := f.Readdir(0)
+		if err != nil {
+			log.Println("2", err)
+			return
+		}
+		for _, v := range list {
+			// log.Println(file + "/" + v.Name())
+
+			if v.IsDir() {
+				// 缺少基础路径
+				fileList(file + "/" + v.Name())
+			} else {
+				FILES = append(FILES, file+"/"+v.Name())
+				// log.Println(FILES)
+			}
+
+		}
+	}
+	return FILES
 }
