@@ -34,13 +34,15 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 		page = 1
 	}
 
+	title := ctx.URLParam("title")
+
 	projectID, _ := ctx.URLParamInt("id")
 
 	p := new(models.Project)
 	projects := p.List()
 
 	t := new(models.Task)
-	tasks := t.List(projectID, page)
+	tasks := t.List(projectID, page, title)
 
 	var tasklists = make([]taskList, 0)
 	for _, v := range tasks {
@@ -60,6 +62,7 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 	ctx.ViewData("page1", page-1)
 	ctx.ViewData("page2", page+1)
 	ctx.ViewData("id", projectID)
+	ctx.ViewData("title", title)
 	ctx.View("task/index.html")
 }
 

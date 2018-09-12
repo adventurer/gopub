@@ -2,14 +2,24 @@ package models
 
 import (
 	"log"
+	"strconv"
 )
 
-func (p *Task) List(id, page int) (list []Task) {
+func (p *Task) List(id, page int, title string) (list []Task) {
 	var err error
 	list = make([]Task, 0)
 
+	condition := " 1 "
+
 	if id >= 0 {
-		err = Xorm.Alias("o").Where("project_id = ?", id).Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
+		condition += " and project_id =  " + strconv.Itoa(id)
+	}
+	if title != "" {
+		condition += " and title like  '%" + title + "'"
+	}
+	// err = Xorm.Alias("o").Where(condition, id).Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
+	if condition != "" {
+		err = Xorm.Alias("o").Where(condition).Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
 	} else {
 		err = Xorm.Alias("o").Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
 	}
