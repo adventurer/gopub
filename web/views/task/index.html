@@ -67,7 +67,7 @@
                                 <div class="small text-muted">发布于: {{$v.Task.CreatedAt}}</div>
                             </td>
                             <td>
-                                <textarea class="form-control" rows="2" readonly>{{$v.Task.FileList}}</textarea>
+                                <textarea class="form-control taskFiles" rows="2" readonly>{{$v.Task.FileList}}</textarea>
                             </td>
                             <td id="upload_{{$v.Task.Id}}">
                                 {{if eq $v.Task.Status 3}}

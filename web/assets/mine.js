@@ -5,3 +5,16 @@ $(".sureToGo").bind("click",function(e){
     e.preventDefault();
     console.log(e);
 })
+
+$(".taskFiles").bind({
+    "click":function(_e){
+        style = $(this).attr("style")
+        console.log(style)
+        if (typeof(style) == "undefined" || style == "") {
+            $(this).attr("style","width:60%;height:400px;position:absolute;left:20%;top:30%;z-index:999;")
+        } else {
+            $(this).attr("style","")            
+        }
+    }
+})
+
