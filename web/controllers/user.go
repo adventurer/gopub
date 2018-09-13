@@ -3,7 +3,6 @@ package controllers
 import (
 	"crypto/md5"
 	"encoding/base64"
-	"encoding/json"
 	"fmt"
 	"gopub/cache"
 	"gopub/models"
@@ -91,19 +90,7 @@ func (c *DefauleController) UserActive(ctx iris.Context) {
 	}
 	u := models.User{}
 	u.SetRoleById(id, role)
-	ctx.Redirect("/user/ctl")
-}
-
-// ------------------
-// 列表
-func (c *DefauleController) Users(ctx iris.Context) {
-	blob, _ := json.Marshal(cache.MemUsersIdx)
-	ctx.Write(blob)
-}
-
-// 用户界面
-func (c *DefauleController) UserCtl(ctx iris.Context) {
-	ctx.View("user/index.html")
+	ctx.Redirect("/user/index")
 }
 
 // 用户列表
@@ -114,8 +101,8 @@ func (c *DefauleController) UserList(ctx iris.Context) {
 		log.Println(err)
 		return
 	}
-	blob, _ := json.Marshal(users)
-	ctx.Write(blob)
+	ctx.ViewData("list", users)
+	ctx.View("user/index.html")
 }
 
 // 删除
@@ -127,6 +114,5 @@ func (c *DefauleController) UserDel(ctx iris.Context) {
 	}
 	u := models.User{}
 	u.DelUserById(id)
-	ctx.Redirect("/user/ctl")
-
+	ctx.Redirect("/user/index")
 }

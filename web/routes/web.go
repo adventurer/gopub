@@ -67,6 +67,13 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 		adminRoutes.Any("/version/switch", controller.AdminCheck, controller.VersionSwitch)
 
+		// 人员管理
+		adminRoutes.Any("/user/index", controller.AdminCheck, controller.UserList)
+
+		adminRoutes.Any("/user/del", controller.AdminCheck, controller.UserDel)
+
+		adminRoutes.Any("/user/active", controller.AdminCheck, controller.UserActive)
+
 		// 项目管理
 		adminRoutes.Any("/project/index", controller.AdminCheck, controller.ProjectIndex)
 
