@@ -20,7 +20,6 @@ func (c *DefauleController) ProjectIndex(ctx iris.Context) {
 	projects := p.List()
 
 	ctx.ViewData("project", projects)
-
 	ctx.View("project/index.html")
 }
 
@@ -32,6 +31,7 @@ func (c *DefauleController) ProjectDel(ctx iris.Context) {
 	}
 	p := models.Project{Id: id}
 	p.Del()
+	cache.CacheProject()
 	ctx.Redirect("/project/index", 302)
 }
 
@@ -55,6 +55,7 @@ func (c *DefauleController) ProjectCopy(ctx iris.Context) {
 		ctx.WriteString(fmt.Sprintf("%s", err))
 		return
 	}
+	cache.CacheProject()
 	ctx.Redirect("/project/index", 302)
 }
 
@@ -175,6 +176,7 @@ func (c *DefauleController) ProjectCommit(ctx iris.Context) {
 		log.Println(err)
 		return
 	}
+	cache.CacheProject()
 	ctx.Redirect("/project/index", 302)
 }
 
@@ -205,6 +207,7 @@ func (c *DefauleController) ProjectEditCommit(ctx iris.Context) {
 		log.Println(err)
 		return
 	}
+	cache.CacheProject()
 	ctx.Redirect("/project/edit?id="+strconv.Itoa(p.Id), 302)
 }
 

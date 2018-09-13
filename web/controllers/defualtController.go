@@ -22,6 +22,7 @@ func (c *DefauleController) SessionInit(ctx iris.Context) {
 // 验证登陆
 func (c *DefauleController) LoginCheck(ctx iris.Context) {
 	s := session.Sess.Start(ctx)
+
 	userid, err := s.GetInt("user_id")
 	if err != nil || userid <= 0 {
 		ctx.ViewLayout(iris.NoLayout)
