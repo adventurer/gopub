@@ -71,7 +71,11 @@ func CompressFiles(files []string, project *models.Project, destFilePath string)
 			return "", err
 		}
 		recPath := strings.Replace(file, project.DeployFrom+"/", "", -1)
-		err = compressFile(file, recPath, tw, fi)
+		if fi.IsDir() {
+			err = compressDir(file, recPath, tw)
+		} else {
+			err = compressFile(file, recPath, tw, fi)
+		}
 		if err != nil {
 			return "", err
 		}
