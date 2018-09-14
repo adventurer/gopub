@@ -42,8 +42,12 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 	adminRoutes := app.Party("/", controller.SessionInit, controller.LoginCheck)
 	{
-		// 任务处理
 		adminRoutes.Any("/welcome", controller.Welcome)
+
+		// 服务器状态
+		adminRoutes.Any("/status", controller.Status)
+
+		// 任务处理
 
 		adminRoutes.Any("/task/index", controller.TaskIndex)
 

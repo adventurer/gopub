@@ -8,15 +8,13 @@ $(".sureToGo").bind("click",function(e){
 
 $(".taskFiles .fa-window-maximize").bind({
     "click":function(_e){
-        // console.log($(this).parent())
-        // return
         that = $(this).parent()
         area = $(this).prev()
         area.attr('rows','18')
-        console.log(area)
+
 
         style = that.attr("style")
-        console.log(style)
+
         if (style == "position:relative;") {
             console.log(1)
             that.attr("style","position:relative;width:60%;height:410px;position:fixed;left:20%;top:30%;z-index:999;")
