@@ -67,7 +67,10 @@
                                 <div class="small text-muted">发布于: {{$v.Task.CreatedAt}}</div>
                             </td>
                             <td>
-                                <textarea class="form-control taskFiles" rows="2" readonly>{{$v.Task.FileList}}</textarea>
+                                <div style="position:relative;" class="taskFiles">
+                                    <textarea class="form-control" rows="2" readonly>{{$v.Task.FileList}}</textarea>
+                                    <i style="position:absolute;top:2px;right:2px;" class="fa fa-window-maximize" data-toggle="tooltip" title="" data-original-title="fa fa-window-maximize"></i>
+                                </div>
                             </td>
                             <td id="upload_{{$v.Task.Id}}">
                                 {{if eq $v.Task.Status 3}}

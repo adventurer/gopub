@@ -6,14 +6,24 @@ $(".sureToGo").bind("click",function(e){
     console.log(e);
 })
 
-$(".taskFiles").bind({
+$(".taskFiles .fa-window-maximize").bind({
     "click":function(_e){
-        style = $(this).attr("style")
+        // console.log($(this).parent())
+        // return
+        that = $(this).parent()
+        area = $(this).prev()
+        area.attr('rows','18')
+        console.log(area)
+
+        style = that.attr("style")
         console.log(style)
-        if (typeof(style) == "undefined" || style == "") {
-            $(this).attr("style","width:60%;height:400px;position:fixed;left:20%;top:30%;z-index:999;")
+        if (style == "position:relative;") {
+            console.log(1)
+            that.attr("style","position:relative;width:60%;height:410px;position:fixed;left:20%;top:30%;z-index:999;")
         } else {
-            $(this).attr("style","")            
+            console.log(2)
+            area.attr('rows',2)
+            that.attr("style","position:relative;")            
         }
     }
 })

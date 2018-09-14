@@ -21,6 +21,6 @@ func init() {
 		return
 	}
 
-	Xorm.ShowSQL(true)
+	// Xorm.ShowSQL(true)
 	// Xorm.Logger().SetLevel(core.LOG_DEBUG)
 }
