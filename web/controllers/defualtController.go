@@ -32,7 +32,23 @@ func (c *DefauleController) LoginCheck(ctx iris.Context) {
 		ctx.View("error/401.html")
 		return
 	}
-	userrole := s.Get("user_role")
+	userrole, err := s.GetInt("user_role")
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "系统错误，角色类型")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/user/login`)
+		ctx.View("error/401.html")
+		return
+	}
+	if userrole <= 0 {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "登陆失败")
+		ctx.ViewData("message", "请联系系统管理员开通账户")
+		ctx.ViewData("url", `/user/login`)
+		ctx.View("error/401.html")
+		return
+	}
 	username := s.Get("user_name")
 
 	ctx.ViewData("userid", userid)
