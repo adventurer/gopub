@@ -7,7 +7,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">名称</label>
-                                <input name="Name" type="text" class="form-control"  placeholder="project name..." value="">
+                                <input name="Name" type="text" class="form-control"  placeholder="project name..." value="" required>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3">
@@ -24,37 +24,37 @@
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="form-label">git地址</label>
-                                <input name="RepoUrl" type="text" class="form-control" placeholder="http://uername:password@git.***">
+                                <input name="RepoUrl" type="text" class="form-control" placeholder="http://uername:password@git.***" required>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">本地仓库路径</label>
-                                <input name="DeployFrom" type="text" class="form-control"  placeholder="repos/***" value="">
+                                <input name="DeployFrom" type="text" class="form-control"  placeholder="repos/***" value="" required>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3">
                             <div class="form-group">
                                 <label class="form-label">远程仓库路径</label>
-                                <input name="ReleaseLibrary" type="text" class="form-control" placeholder="/home/wwwbak/" value="">
+                                <input name="ReleaseLibrary" type="text" class="form-control" placeholder="/home/wwwbak/" value="" required>
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-6">
                             <div class="form-group">
                                 <label class="form-label">远程代码路径</label>
-                                <input name="ReleaseTo" type="text" class="form-control" placeholder="/home/wwwdoc/">
+                                <input name="ReleaseTo" type="text" class="form-control" placeholder="/home/wwwdoc/" required>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">版本保留数</label>
-                                <input name="KeepVersionNum" type="text" class="form-control" placeholder="20" value="">
+                                <input name="KeepVersionNum" type="text" class="form-control" placeholder="20" value="" required>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">发布用户</label>
-                                <input name="ReleaseUser" type="text" class="form-control" placeholder="root" value="">
+                                <input name="ReleaseUser" type="text" class="form-control" placeholder="root" value="" required>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -105,7 +105,7 @@
                         <div class="col-md-12">
                             <div class="form-group mb-0">
                                 <label class="form-label">机器列表</label>
-                                <textarea name="Hosts" rows="5" class="form-control" placeholder="192.168.1.1:22,192.168.1.2:23" value=""></textarea>
+                                <textarea name="Hosts" rows="5" class="form-control" placeholder="192.168.1.1:22,192.168.1.2:23" value="" required></textarea>
                             </div>
                         </div>
                         <div class="col-md-12">
