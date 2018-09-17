@@ -2,15 +2,14 @@
     <div class="col-12">
             <div class="card">
                 <div class="card-header">
-                <h3 class="card-title">创建上线单</h3>
+                <h3 class="card-title">创建上线单@{{.project.Name}}@</h3>
+                <span>{{.project.Hosts}}</span>
                 </div>
+
                 <div class="card-body">
                     <form action="/task/commit" method="POST">
                         <input name="ProjectId" type="text" value="{{.taskId}}" hidden>
                         <div class="row">
-                            <div class="col-auto">
-                                <img class="avatar avatar-xl" src="../assets/images/sm/avatar2.jpg" alt="">
-                            </div>
                             <div class="col">
                                 <div class="form-group">
                                     <label class="form-label">上线单标题</label>
@@ -35,7 +34,7 @@
                             <textarea id="filearea" name="FileList" class="form-control" rows="10" required></textarea>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">选择分支</label>
+                            <label class="form-label">选择分支(目前只支持master，其他选了也不起作用)</label>
                             <div class="input-group mb-3">
                                 <select name="Branch" class="custom-select" id="inputGroupSelect01">
                                 {{range $k,$v := .branchList}}
