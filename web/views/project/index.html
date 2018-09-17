@@ -28,7 +28,7 @@
                             <tr>
                                 <th>环境</th>
                                 <th>项目</th>
-                                <th>主机&版本</th>
+                                <th>用户&主机</th>
                                 <th>主机路径</th>
                                 <th>本地仓库路径</th>
                                 <th>开启审核</th>
@@ -52,8 +52,8 @@
                                     <span>{{$v.CreatedAt}}</span>
                                 </td>
                                 <td>
-                                    <h6 class="mb-0">{{$v.Hosts}}</h6>
-                                    <span class="text-muted">{{$v.Version}}</span>
+                                    <h6 class="mb-0">{{$v.ReleaseUser}}</h6>
+                                    <span class="text-muted">{{$v.Hosts}}</span>
                                 </td>
                                 <td>
                                     <h6 class="mb-0"><span class="badge badge-success">部署</span>{{$v.ReleaseTo}}</h6>

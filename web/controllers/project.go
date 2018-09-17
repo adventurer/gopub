@@ -104,7 +104,7 @@ func (c *DefauleController) ProjectInitialize(ctx iris.Context) {
 		port := strings.Split(project.Hosts, ":")
 		remoteEnv.Host = port[0]
 		remoteEnv.Port, _ = strconv.Atoi(port[1])
-		remoteEnv.User = "root"
+		remoteEnv.User = project.ReleaseUser
 
 		// 检查远程备份目录
 		log.Println("检查远程仓库目录")

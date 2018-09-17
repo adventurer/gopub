@@ -288,7 +288,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		port := strings.Split(project.Hosts, ":")
 		remoteEnv.Host = port[0]
 		remoteEnv.Port, _ = strconv.Atoi(port[1])
-		remoteEnv.User = "root"
+		remoteEnv.User = project.ReleaseUser
 
 		// go func(remoteEnv *command.Command, project *models.Project, task *models.Task) {
 		// 上传文件
@@ -384,7 +384,7 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 		port := strings.Split(project.Hosts, ":")
 		cmdEnv.Host = port[0]
 		cmdEnv.Port, _ = strconv.Atoi(port[1])
-		cmdEnv.User = "root"
+		cmdEnv.User = project.ReleaseUser
 
 		// go func(cmdEnv *command.Command, project *models.Project, task *models.Task) {
 		// 上传服务器

@@ -31,7 +31,7 @@ func (p *Project) New() (affected int64, err error) {
 // 修改
 func (p *Project) Edit() (affected int64, err error) {
 	log.Println(p)
-	affected, err = Xorm.Id(p.Id).Cols("Name").Cols("Level").Cols("rep_url").Cols("deploy_from").Cols("release_library").Cols("release_to").Cols("Keep_version_num").Cols("repo_mode").Cols("Audit").Cols("Status").Cols("Hosts").Cols("post_release").Update(p)
+	affected, err = Xorm.Id(p.Id).Cols("Name").Cols("Level").Cols("rep_url").Cols("deploy_from").Cols("release_user").Cols("release_library").Cols("release_to").Cols("Keep_version_num").Cols("repo_mode").Cols("Audit").Cols("Status").Cols("Hosts").Cols("post_release").Update(p)
 	return
 }
 
