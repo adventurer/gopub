@@ -47,7 +47,7 @@ func (c *DefauleController) VersionIndex(ctx iris.Context) {
 		port := strings.Split(project.Hosts, ":")
 		remoteEnv.Host = port[0]
 		remoteEnv.Port, _ = strconv.Atoi(port[1])
-		remoteEnv.User = "root"
+		remoteEnv.User = project.ReleaseUser
 
 		var cmd string
 		var output string
@@ -107,7 +107,7 @@ func (c *DefauleController) VersionSwitch(ctx iris.Context) {
 		port := strings.Split(project.Hosts, ":")
 		remoteEnv.Host = port[0]
 		remoteEnv.Port, _ = strconv.Atoi(port[1])
-		remoteEnv.User = "root"
+		remoteEnv.User = project.ReleaseUser
 
 		// 切换
 		cmd := "ln -sfn " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + version + " " + project.ReleaseTo + path.Base(project.DeployFrom)

@@ -61,7 +61,7 @@ func (c *DefauleController) FileIndex(ctx iris.Context) {
 		port := strings.Split(project.Hosts, ":")
 		remoteEnv.Host = port[0]
 		remoteEnv.Port, _ = strconv.Atoi(port[1])
-		remoteEnv.User = "root"
+		remoteEnv.User = project.ReleaseUser
 
 		cmd := "cat " + project.ReleaseTo + path.Base(project.DeployFrom) + "/" + form.File
 		output, err := remoteEnv.RemoteCommandOutput(cmd)
