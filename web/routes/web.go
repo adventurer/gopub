@@ -95,5 +95,7 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 		adminRoutes.Any("/project/editcommit", controller.AdminCheck, controller.ProjectEditCommit)
 
+		adminRoutes.Any("/project/sshtest", controller.AdminCheck, controller.ProjectSshCheck)
+
 	}
 }

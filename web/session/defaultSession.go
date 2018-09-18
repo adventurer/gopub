@@ -33,7 +33,7 @@ func init() {
 		// 0 means no expire.
 		// -1 means expire when browser closes
 		// or set a value, like 2 hours:
-		Expires: time.Hour * 2,
+		Expires: time.Hour * 24,
 		// if you want to invalid cookies on different subdomains
 		// of the same host, then enable it.
 		// Defaults to false.

@@ -2,13 +2,25 @@ package websocket
 
 import (
 	"fmt"
+	"log"
 	"sync"
+	"time"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/websocket"
 )
 
 var Conn = make(map[websocket.Connection]bool)
+
+func init() {
+	go func() {
+		for {
+			log.Println(Conn)
+			time.Sleep(1 * time.Second)
+		}
+	}()
+
+}
 
 func SetupWebsocket(app *iris.Application) {
 	// create our echo websocket server

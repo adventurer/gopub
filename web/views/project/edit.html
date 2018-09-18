@@ -55,7 +55,7 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="form-label">发布用户</label>
-                                <input name="ReleaseUser" type="text" class="form-control" placeholder="root" value="{{.project.ReleaseUser}}">
+                                <input id="user" name="ReleaseUser" type="text" class="form-control" placeholder="root" value="{{.project.ReleaseUser}}">
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -106,7 +106,8 @@
                         <div class="col-md-12">
                             <div class="form-group mb-0">
                                 <label class="form-label">机器列表</label>
-                                <textarea name="Hosts" rows="5" class="form-control" placeholder="192.168.1.1:22,192.168.1.2:23">{{.project.Hosts}}</textarea>
+                                <textarea id="hosts" name="Hosts" rows="5" class="form-control" placeholder="192.168.1.1:22,192.168.1.2:23">{{.project.Hosts}}</textarea>
+                                <span class="tag tag-blue float-right" onclick="sshTest()">测试链接</span>
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -123,3 +124,22 @@
             </form>
     </div>
 </div>
+
+
+<script>
+function sshTest() {
+    if (confirm("要测试么")) {
+        $.ajax({
+            type: "GET",
+            url: "/project/sshtest",
+            data: {
+                user: $("#user").val(),hosts:$("#hosts").val()
+            },
+            dataType: "html",
+            success: function (data) {
+                alert(data)
+            }
+        });
+    }
+}
+</script>

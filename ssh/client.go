@@ -39,8 +39,10 @@ var client = make(map[string]*ssh.Client, 5)
 
 type Client interface {
 	Login()
-	Cmd(string) ([]byte, error)
-	UploadFile(sourceFile, target string, task models.Task) (stdout, stderr string, err error)
+	Cmd(clientID, cmd string) ([]byte, error)
+	UploadFile(clientID, sourceFile, target string, task models.Task) (stdout, stderr string, err error)
+	Test() (client *ssh.Client, err error)
+	Connect() (clientID string, err error)
 }
 
 type defaultClient struct {
@@ -52,12 +54,17 @@ func init() {
 	go func() {
 		for {
 			for k, v := range client {
-				// 保持ssh链接，并删除失效的
-				_, _, err := v.SendRequest("keepalive", true, nil)
-				if err != nil {
-					tools.Logger.Warn(err)
+				if v != nil {
+					// 保持ssh链接，并删除失效的
+					_, _, err := v.SendRequest("keepalive", true, nil)
+					if err != nil {
+						tools.Logger.Warn(err)
+						delete(client, k)
+					}
+				} else {
 					delete(client, k)
 				}
+
 			}
 			// log.Println(client)
 			time.Sleep(2 * time.Second)
@@ -66,7 +73,7 @@ func init() {
 
 }
 
-func (c *defaultClient) connect() (clientID string, err error) {
+func (c *defaultClient) Connect() (clientID string, err error) {
 	clientID = c.node.Host + ":" + strconv.Itoa(c.node.Port)
 	if client[clientID] != nil {
 		return clientID, nil
@@ -74,10 +81,17 @@ func (c *defaultClient) connect() (clientID string, err error) {
 	tools.Logger.Infof("connect server ssh -p %d %s@%s\n", c.node.Port, c.node.User, c.node.Host)
 	client[clientID], err = ssh.Dial("tcp", fmt.Sprintf("%s:%d", c.node.Host, c.node.Port), c.clientConfig)
 	if err != nil {
-		tools.Logger.Info(err)
+		return "", err
+	}
+	return
+}
+
+func (c *defaultClient) Test() (client *ssh.Client, err error) {
+	client, err = ssh.Dial("tcp", fmt.Sprintf("%s:%d", c.node.Host, c.node.Port), c.clientConfig)
+	if err != nil {
 		return
 	}
-
+	client.Close()
 	return
 }
 
@@ -143,14 +157,8 @@ func NewClient(node *Node) Client {
 	}
 }
 
-func (c *defaultClient) UploadFile(sourceFile, target string, task models.Task) (stdout, stderr string, err error) {
+func (c *defaultClient) UploadFile(clientID, sourceFile, target string, task models.Task) (stdout, stderr string, err error) {
 	tools.Logger.Info("cp file:" + sourceFile + " to " + target)
-	clientID, err := c.connect()
-	if err != nil {
-		tools.Logger.Warn(err)
-		return
-	}
-	// defer client.Close()
 
 	currentSession, err := client[clientID].NewSession()
 	if err != nil {
@@ -216,16 +224,7 @@ func (c *defaultClient) UploadFile(sourceFile, target string, task models.Task) 
 	return
 }
 
-func (c *defaultClient) Cmd(cmd string) ([]byte, error) {
-	clientID, err := c.connect()
-	if err != nil {
-		tools.Logger.Info(err)
-		return nil, err
-	}
-	// defer client.Close()
-
-	// tools.Logger.Info("connect server ssh -p %d %s@%s version: %s\n", c.node.Host, c.node.user(), c.node.Port, string(client.ServerVersion()))
-
+func (c *defaultClient) Cmd(clientID, cmd string) ([]byte, error) {
 	session, err := client[clientID].NewSession()
 	if err != nil {
 		tools.Logger.Info(err)

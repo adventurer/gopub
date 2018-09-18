@@ -19,19 +19,28 @@ type Command struct {
 
 var once sync.Once
 
-func (c *Command) Con() ssh.Client {
+func (c *Command) setup() ssh.Client {
 	node := ssh.Node{Host: c.Host, Port: c.Port, User: c.User}
 	client := ssh.NewClient(&node)
 	return client
 }
 
+func (c *Command) Test() error {
+	_, err := c.setup().Test()
+	return err
+}
+
 func (c *Command) RemoteCommand(cmd string) error {
 	//当存在其他端口时分割host得到端口
-	client := c.Con()
+	client := c.setup()
+	clientID, err := client.Connect()
+	if err != nil {
+		return err
+	}
 	tools.Logger.Infof("run remote command@%s@%d:%s", c.Host, c.Port, cmd)
 	websocket.Broadcast(websocket.Conn, fmt.Sprintf("run remote command@%s@%d:%s", c.Host, c.Port, cmd))
 
-	output, err := client.Cmd(cmd)
+	output, err := client.Cmd(clientID, cmd)
 	if err == nil && len(output) <= 0 {
 		output = []byte("success")
 	}
@@ -60,10 +69,14 @@ func (c *Command) LocalCommand(cmd string) error {
 
 func (c *Command) RemoteCommandOutput(cmd string) (output string, err error) {
 	//当存在其他端口时分割host得到端口
-	client := c.Con()
+	client := c.setup()
+	clientID, err := client.Connect()
+	if err != nil {
+		return "", err
+	}
 	tools.Logger.Info("run remote command:", cmd)
 
-	result, err := client.Cmd(cmd)
+	result, err := client.Cmd(clientID, cmd)
 	output = string(result)
 
 	return
@@ -83,8 +96,12 @@ func (c *Command) LocalCommandOutput(cmd string) (output []byte, err error) {
 }
 
 func (c *Command) FileUpload(sourceFile, destFile string, task models.Task) error {
-	client := c.Con()
-	output, errput, err := client.UploadFile(sourceFile, destFile, task)
+	client := c.setup()
+	clientID, err := client.Connect()
+	if err != nil {
+		return err
+	}
+	output, errput, err := client.UploadFile(clientID, sourceFile, destFile, task)
 	tools.Logger.Info("upload file:", string(output), string(errput))
 	return err
 }

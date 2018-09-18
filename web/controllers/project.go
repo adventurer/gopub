@@ -211,6 +211,27 @@ func (c *DefauleController) ProjectEditCommit(ctx iris.Context) {
 	ctx.Redirect("/project/edit?id="+strconv.Itoa(p.Id), 302)
 }
 
+func (c *DefauleController) ProjectSshCheck(ctx iris.Context) {
+	var message string
+
+	user := ctx.URLParam("user")
+	hosts_param := ctx.URLParam("hosts")
+	hosts := strings.Split(hosts_param, ",")
+	for _, v := range hosts {
+		host_split := strings.Split(v, ":")
+		host := host_split[0]
+		port, _ := strconv.Atoi(host_split[1])
+		command := command.Command{Host: host, Port: port, User: user}
+		err := command.Test()
+		if err != nil {
+			message += "err:" + err.Error() + "\n"
+		} else {
+			message += "success:" + host + ":" + strconv.Itoa(port) + "\n"
+		}
+	}
+	ctx.WriteString(message)
+}
+
 // -----------------
 
 func (c *DefauleController) ProjectList(ctx iris.Context) {

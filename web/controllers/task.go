@@ -296,6 +296,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		err = remoteEnv.FileUpload(destFile, project.ReleaseLibrary+path.Base(project.DeployFrom)+"/"+task.LinkId+".tar.gz", *task)
 		if err != nil {
 			tools.Logger.Info(err)
+			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包出错"))
 			return
 		}
 
@@ -324,13 +325,15 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		}
 
 		// 部署后命令
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "70%", "执行部署后命令"))
-		cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
-		for _, cmd := range cmds {
-			err = remoteEnv.RemoteCommand(cmd)
-			if err != nil {
-				tools.Logger.Info(err)
-				return
+		if project.PostRelease != "" {
+			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "70%", "执行部署后命令"))
+			cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
+			for _, cmd := range cmds {
+				err = remoteEnv.RemoteCommand(cmd)
+				if err != nil {
+					tools.Logger.Info(err)
+					return
+				}
 			}
 		}
 		// }(remoteEnv, project, task)
@@ -392,6 +395,7 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 		err = cmdEnv.FileUpload(destFile, project.ReleaseLibrary+path.Base(project.DeployFrom)+"/"+task.LinkId+".tar.gz", *task)
 		if err != nil {
 			tools.Logger.Info(err)
+			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包出错"))
 			return
 		}
 
@@ -428,13 +432,15 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 		}
 
 		// 部署后命令
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "80%", "执行部署后命令"))
-		cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
-		for _, cmd := range cmds {
-			err := cmdEnv.RemoteCommand(cmd)
-			if err != nil {
-				tools.Logger.Info(err)
-				return err
+		if project.PostRelease != "" {
+			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "80%", "执行部署后命令"))
+			cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
+			for _, cmd := range cmds {
+				err := cmdEnv.RemoteCommand(cmd)
+				if err != nil {
+					tools.Logger.Info(err)
+					return err
+				}
 			}
 		}
 		// }(cmdEnv, project, task)
