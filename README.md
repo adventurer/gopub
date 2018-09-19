@@ -32,4 +32,7 @@
 	}
 	请自行去掉斜杠
 
+	下载编译版本：
+	https://github.com/adventurer/gopub/releases/tag/latest
+
 	ps：欢迎fork和点赞～～
