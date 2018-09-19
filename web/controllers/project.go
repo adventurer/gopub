@@ -232,6 +232,40 @@ func (c *DefauleController) ProjectSshCheck(ctx iris.Context) {
 	ctx.WriteString(message)
 }
 
+// 设定审核状态
+func (c *DefauleController) ProjectAudit(ctx iris.Context) {
+	id, err := ctx.URLParamInt("id")
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/project/index`)
+		ctx.View("error/401.html")
+		return
+	}
+	audit, err := ctx.URLParamInt("audit")
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/project/index`)
+		ctx.View("error/401.html")
+		return
+	}
+
+	p := models.Project{}
+	_, err = p.SetAudit(id, audit)
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/project/index`)
+		ctx.View("error/401.html")
+		return
+	}
+	ctx.Redirect("/project/index")
+}
+
 // -----------------
 
 func (c *DefauleController) ProjectList(ctx iris.Context) {

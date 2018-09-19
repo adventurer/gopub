@@ -15,7 +15,7 @@ func init() {
 	if err != nil {
 		panic(err.Error())
 	}
-	err = Xorm.Sync(new(Health), new(Project))
+	err = Xorm.Sync(new(Health), new(Project), new(Task))
 	if err != nil {
 		log.Println(err)
 		return

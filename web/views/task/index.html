@@ -43,6 +43,8 @@
                             <th width="300px">发布进度</th>
                             <th>版本</th>
                             <th>部署</th>
+                            <th>审核</th>
+
 
                         </tr>
                     </thead>
@@ -107,6 +109,7 @@
                                 <div>{{$v.Task.LinkId}}</div>
                             </td>
                             <td>
+                                
                                 {{if eq $v.Task.Status 3}}
                                 <i class="fa fa-thumbs-up" data-toggle="tooltip" title="" data-original-title="搞定"></i>
                                 {{else}}
@@ -114,6 +117,20 @@
                                 <a href="/task/del?id={{$v.Task.Id}}"><button type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-trash-o"></i></button></a>
                                 {{end}}
                                 
+                            </td>
+                            <td>
+                                {{if eq $.userrole 2}}
+                                <a href="/task/audit?id={{$v.Task.Id}}&audit=0"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}通过</button></a>
+                                <a href="/task/audit?id={{$v.Task.Id}}&audit=2"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 2}}<i class="fe fe-check mr-2"></i>{{end}}拒绝</button></a>
+                                {{else}}
+                                    {{if eq $v.Task.Audit 0}}
+                                        审核通过
+                                    {{else if eq $v.Task.Audit 1}}
+                                        审核中
+                                    {{else if eq $v.Task.Audit 2}}
+                                        审核拒绝
+                                    {{end}}
+                                {{end}}
                             </td>
                         </tr>
                         {{end}}

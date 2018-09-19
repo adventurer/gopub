@@ -96,3 +96,15 @@ func (p *Task) Del() (affected int64, err error) {
 	affected, err = Xorm.Id(p.Id).Delete(p)
 	return
 }
+
+// 设置审核
+func (p *Task) SetAudit(id, audit int) (affected int64, err error) {
+	task := new(Task)
+	task.Id = id
+	task.Audit = audit
+	affected, err = Xorm.Id(id).Cols("audit").Update(task)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return
+}

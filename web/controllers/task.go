@@ -56,6 +56,7 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 		tasklist.Project = projectname
 		tasklists = append(tasklists, tasklist)
 	}
+
 	ctx.ViewData("project", projects)
 	ctx.ViewData("tasklist", tasklists)
 	ctx.ViewData("page", page)
@@ -64,6 +65,40 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 	ctx.ViewData("id", projectID)
 	ctx.ViewData("title", title)
 	ctx.View("task/index.html")
+}
+
+// 审核上线单
+func (c *DefauleController) TaskAudit(ctx iris.Context) {
+	id, err := ctx.URLParamInt("id")
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/task/index`)
+		ctx.View("error/401.html")
+		return
+	}
+	audit, err := ctx.URLParamInt("audit")
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/task/index`)
+		ctx.View("error/401.html")
+		return
+	}
+	t := models.Task{}
+	_, err = t.SetAudit(id, audit)
+	if err != nil {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/task/index`)
+		ctx.View("error/401.html")
+		return
+	}
+	ctx.Redirect("/task/index")
+
 }
 
 // 新任务页面
@@ -201,7 +236,11 @@ func (c *DefauleController) TaskNewCommit(ctx iris.Context) {
 	task.ExLinkId = lastRecord.LinkId
 	_, err = t.New(task)
 	if err != nil {
-		log.Println(err)
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", fmt.Sprintf("%s", err))
+		ctx.ViewData("url", `/task/index`)
+		ctx.View("error/401.html")
 		return
 	}
 	ctx.Redirect("/task/index", 302)
@@ -215,6 +254,20 @@ func (c *DefauleController) TaskDel(ctx iris.Context) {
 		return
 	}
 	t := models.Task{Id: taskID}
+	task := t.Find(taskID)
+	s := session.Sess.Start(ctx)
+	userid, err := s.GetInt("user_id")
+	fmt.Println(task.UserId, userid)
+
+	if task.UserId != userid {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "不能删除其他人的上线单")
+		ctx.ViewData("message", "总之这样子是不好的")
+		ctx.ViewData("url", `/task/index`)
+		ctx.View("error/401.html")
+		return
+	}
+
 	t.Del()
 	ctx.Redirect("/task/index", 302)
 }
@@ -229,6 +282,21 @@ func (c *DefauleController) TaskDeploy(ctx iris.Context) {
 	}
 	t := new(models.Task)
 	task := t.Find(id)
+	if task.Audit != 0 {
+		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "0%", "请等待审核"))
+		return
+	}
+
+	s := session.Sess.Start(ctx)
+	user_id, err := s.GetInt("user_id")
+	if err != nil {
+		ctx.Write([]byte(fmt.Sprintf("%s", err)))
+		return
+	}
+	if user_id != task.UserId {
+		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "0%", "不能部署其他人的上线单"))
+		return
+	}
 
 	p := new(models.Project)
 	project, err := p.Find(task.ProjectId)
@@ -280,7 +348,6 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 	}
 
 	// 上传到服务器并链接
-
 	hosts := strings.Split(strings.TrimSpace(project.Hosts), ",")
 	for _, v := range hosts {
 		remoteEnv := new(command.Command)
@@ -290,7 +357,6 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		remoteEnv.Port, _ = strconv.Atoi(port[1])
 		remoteEnv.User = project.ReleaseUser
 
-		// go func(remoteEnv *command.Command, project *models.Project, task *models.Task) {
 		// 上传文件
 		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包"))
 		err = remoteEnv.FileUpload(destFile, project.ReleaseLibrary+path.Base(project.DeployFrom)+"/"+task.LinkId+".tar.gz", *task)
@@ -299,6 +365,15 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包出错"))
 			return
 		}
+	}
+
+	for _, v := range hosts {
+		remoteEnv := new(command.Command)
+		project.Hosts = v
+		port := strings.Split(project.Hosts, ":")
+		remoteEnv.Host = port[0]
+		remoteEnv.Port, _ = strconv.Atoi(port[1])
+		remoteEnv.User = project.ReleaseUser
 
 		// 远程释放文件
 		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "40%", "释放文件"))
@@ -336,7 +411,6 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 				}
 			}
 		}
-		// }(remoteEnv, project, task)
 
 	}
 
@@ -389,7 +463,6 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 		cmdEnv.Port, _ = strconv.Atoi(port[1])
 		cmdEnv.User = project.ReleaseUser
 
-		// go func(cmdEnv *command.Command, project *models.Project, task *models.Task) {
 		// 上传服务器
 		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包"))
 		err = cmdEnv.FileUpload(destFile, project.ReleaseLibrary+path.Base(project.DeployFrom)+"/"+task.LinkId+".tar.gz", *task)
@@ -398,6 +471,14 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包出错"))
 			return
 		}
+	}
+
+	for _, v := range hosts {
+		project.Hosts = v
+		port := strings.Split(project.Hosts, ":")
+		cmdEnv.Host = port[0]
+		cmdEnv.Port, _ = strconv.Atoi(port[1])
+		cmdEnv.User = project.ReleaseUser
 
 		// 备份当前版本
 		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "40%", "备份当前版本"))
@@ -443,7 +524,6 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 				}
 			}
 		}
-		// }(cmdEnv, project, task)
 	}
 
 	// 删除文件包

@@ -68,7 +68,7 @@ type Task struct {
 	Id                   int       `xorm:"not null pk autoincr INT(11)"`
 	UserId               int       `xorm:"not null comment('用户id') INT(21)"`
 	ProjectId            int       `xorm:"not null default 0 comment('项目id') INT(21)"`
-	Action               int       `xorm:"not null default 0 comment('0全新上线，2回滚') SMALLINT(1)"`
+	Audit                int       `xorm:"not null default 0 comment('0审核通过，1审核中') SMALLINT(1)"`
 	Status               int       `xorm:"not null default 0 comment('状态0：新建提交，1审核通过，2审核拒绝，3上线完成，4上线失败') SMALLINT(1)"`
 	Title                string    `xorm:"default '' comment('上线的软链号') VARCHAR(100)"`
 	LinkId               string    `xorm:"default '' comment('上线的软链号') VARCHAR(20)"`

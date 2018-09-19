@@ -40,3 +40,15 @@ func (p *Project) Del() (affected int64, err error) {
 	affected, err = Xorm.Id(p.Id).Delete(p)
 	return
 }
+
+// 设置审核状态
+func (p *Project) SetAudit(id, audit int) (affected int64, err error) {
+	project := new(Project)
+	project.Id = id
+	project.Audit = audit
+	affected, err = Xorm.Id(id).Cols("audit").Update(project)
+	if err != nil {
+		log.Println(err.Error())
+	}
+	return
+}

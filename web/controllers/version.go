@@ -118,12 +118,14 @@ func (c *DefauleController) VersionSwitch(ctx iris.Context) {
 		}
 
 		// 部署后命令
-		cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
-		for _, cmd := range cmds {
-			err := remoteEnv.RemoteCommand(cmd)
-			if err != nil {
-				ctx.WriteString(fmt.Sprintf("%s", err))
-				return
+		if project.PostRelease != "" {
+			cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
+			for _, cmd := range cmds {
+				err := remoteEnv.RemoteCommand(cmd)
+				if err != nil {
+					ctx.WriteString(fmt.Sprintf("%s", err))
+					return
+				}
 			}
 		}
 

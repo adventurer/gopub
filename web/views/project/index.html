@@ -63,7 +63,8 @@
                                         {{$v.DeployFrom}}
                                 </td>
                                 <td class="">
-                                    {{$v.Audit}}
+                                    <a href="/project/audit?id={{$v.Id}}&audit=1"><button type="button" class="btn btn-success btn-sm">{{if eq $v.Audit 1}}<i class="fe fe-check mr-2"></i>{{end}}开启</button></a>
+                                    <a href="/project/audit?id={{$v.Id}}&audit=0"><button type="button" class="btn btn-success btn-sm">{{if eq $v.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}关闭</button></a>
                                 </td>
                                 <td>
                                     <a href="javascript:;" onclick="projectInit('{{$v.Id}}')" ><span class="badge badge-danger">初始化</span></a> 

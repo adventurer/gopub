@@ -9,6 +9,7 @@
                 <div class="card-body">
                     <form action="/task/commit" method="POST">
                         <input name="ProjectId" type="text" value="{{.taskId}}" hidden>
+                        <input name="Audit" type="text" value="{{.project.Audit}}" hidden>
                         <div class="row">
                             <div class="col">
                                 <div class="form-group">

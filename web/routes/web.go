@@ -63,6 +63,8 @@ func (r *Routes) InitRoute(app *iris.Application) {
 
 		adminRoutes.Any("/task/del", controller.TaskDel)
 
+		adminRoutes.Any("/task/audit", controller.TaskAudit)
+
 		// 文件检查
 		adminRoutes.Any("/filecheck/index", controller.FileIndex)
 
@@ -96,6 +98,8 @@ func (r *Routes) InitRoute(app *iris.Application) {
 		adminRoutes.Any("/project/editcommit", controller.AdminCheck, controller.ProjectEditCommit)
 
 		adminRoutes.Any("/project/sshtest", controller.AdminCheck, controller.ProjectSshCheck)
+
+		adminRoutes.Any("/project/audit", controller.AdminCheck, controller.ProjectAudit)
 
 	}
 }
