@@ -44,9 +44,6 @@ func (r *Routes) InitRoute(app *iris.Application) {
 	{
 		adminRoutes.Any("/welcome", controller.Welcome)
 
-		// 服务器状态
-		adminRoutes.Any("/status", controller.Status)
-
 		// 任务处理
 
 		adminRoutes.Any("/task/index", controller.TaskIndex)
