@@ -19,9 +19,17 @@ func init() {
 
 	Xorm, err = xorm.NewEngine("mysql", dns)
 	if err != nil {
-		panic(err.Error())
+		log.Fatal("db setup err:", err)
+		return
 	}
-	err = Xorm.Sync(new(Health), new(Project), new(Task))
+
+	err = Xorm.Ping()
+	if err != nil {
+		log.Fatal("db connection err:", err)
+		return
+	}
+
+	err = Xorm.Sync(new(Project), new(Task), new(User))
 	if err != nil {
 		log.Println(err)
 		return
