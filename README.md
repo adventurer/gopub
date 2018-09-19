@@ -33,6 +33,6 @@
 	请自行去掉斜杠
 
 	下载编译版本：
-	<a href="https://github.com/adventurer/gopub/releases/tag/latest">下载</a>
+	[下载](https://github.com/adventurer/gopub/releases/tag/latest "下载")
 
 	ps：欢迎fork和点赞～～
