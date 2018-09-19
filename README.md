@@ -1,6 +1,17 @@
 # gopub
+	项目说明：
+	gopub是一款由golang语言编写的代码发布系统,适用于golang,php,java,python等脚本代码的发布。
+
+	功能清单：
+	1.版本文件发布
+	2.版本任意切换
+	3.线上文件检查
+	4.发布审核
+	5.版本发布记录
+	6.发布后自定义命令
+
 	使用说明：
-	从源码构建：
+	从源码构建：
 	编译：
 	windows:
 	CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o gopub main.go
