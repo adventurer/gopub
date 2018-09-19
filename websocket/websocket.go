@@ -1,7 +1,6 @@
 package websocket
 
 import (
-	"fmt"
 	"sync"
 
 	"github.com/kataras/iris"
@@ -62,7 +61,6 @@ func handleConnection(c websocket.Connection) {
 		mutex.Lock()
 		delete(Conn, c)
 		mutex.Unlock()
-		fmt.Printf("\nConnection with ID: %s has been disconnected!\n", c.ID())
 	})
 }
 
