@@ -45,13 +45,13 @@ func main() {
 	// App.Logger().SetLevel("debug")
 
 	// Load the template files.
-	tmpl := iris.HTML("./web/views", ".html").Layout("layouts/layout.html").Reload(true)
+	tmpl := iris.HTML("./html/views", ".html").Layout("layouts/layout.html").Reload(true)
 	App.RegisterView(tmpl)
 
 	route := new(routes.Routes)
 	route.InitRoute(App)
 
-	App.StaticWeb("/assets", "./web/assets")
+	App.StaticWeb("/assets", "./html/assets")
 
 	websocket.SetupWebsocket(App)
 

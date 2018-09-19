@@ -119,16 +119,18 @@
                                 
                             </td>
                             <td>
-                                {{if eq $.userrole 2}}
-                                <a href="/task/audit?id={{$v.Task.Id}}&audit=0"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}通过</button></a>
-                                <a href="/task/audit?id={{$v.Task.Id}}&audit=2"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 2}}<i class="fe fe-check mr-2"></i>{{end}}拒绝</button></a>
-                                {{else}}
-                                    {{if eq $v.Task.Audit 0}}
-                                        审核通过
-                                    {{else if eq $v.Task.Audit 1}}
-                                        审核中
-                                    {{else if eq $v.Task.Audit 2}}
-                                        审核拒绝
+                                {{if ne $v.Task.Status 3}}
+                                    {{if eq $.userrole 2}}
+                                    <a href="/task/audit?id={{$v.Task.Id}}&audit=0"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}通过</button></a>
+                                    <a href="/task/audit?id={{$v.Task.Id}}&audit=2"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 2}}<i class="fe fe-check mr-2"></i>{{end}}拒绝</button></a>
+                                    {{else}}
+                                        {{if eq $v.Task.Audit 0}}
+                                            审核通过
+                                        {{else if eq $v.Task.Audit 1}}
+                                            审核中
+                                        {{else if eq $v.Task.Audit 2}}
+                                            审核拒绝
+                                        {{end}}
                                     {{end}}
                                 {{end}}
                             </td>
