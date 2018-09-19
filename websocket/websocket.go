@@ -42,7 +42,7 @@ func SetupWebsocket(app *iris.Application) {
 }
 
 func handleConnection(c websocket.Connection) {
-	fmt.Printf("\nConnection with ID: %s has been connected!\n", c.ID())
+	// fmt.Printf("\nConnection with ID: %s has been connected!\n", c.ID())
 	var myChatRoom = c.Context().Path()
 	var mutex = new(sync.Mutex)
 	// Read events from browser

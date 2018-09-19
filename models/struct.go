@@ -4,6 +4,8 @@ import (
 	"time"
 )
 
+var AppConfig Config
+
 type Group struct {
 	Id        int `xorm:"not null pk autoincr INT(11)"`
 	ProjectId int `xorm:"not null comment('项目id') INT(2)"`
@@ -109,6 +111,16 @@ type Health struct {
 	Report    int       `xorm:"not null default 10 comment('失败次数报警') SMALLINT(6)"`
 	CreatedAt time.Time `xorm:"not null DATETIME"`
 	UpdatedAt time.Time `xorm:"not null DATETIME"`
+}
+
+type Config struct {
+	Listen string
+	DBIp   string
+	DBPort string
+	DBUser string
+	DBPass string
+	DBName string
+	SqlLog bool
 }
 
 type Version struct {

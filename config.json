@@ -1,0 +1,9 @@
+{
+	"Listen": ":8088",
+	"DBIp":   "192.168.3.208",
+	"DBPort": "3306",
+	"DBUser": "root",
+	"DBPass": "112215334",
+	"DBName": "pazu",
+	"SqlLog": false
+}

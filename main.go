@@ -1,22 +1,17 @@
 package main
 
 import (
-	"gopub/command"
+	"gopub/models"
 	"gopub/web/routes"
 	"gopub/websocket"
-	"log"
-	"os"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
 )
 
 var App = iris.New()
-var FILES []string
 
 func main() {
-	// log.Println(fileList("repos/waikuai.com/App"))
-	// os.Exit(1)
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
@@ -55,7 +50,7 @@ func main() {
 
 	websocket.SetupWebsocket(App)
 
-	App.Run(iris.Addr(":8088"), iris.WithConfiguration(iris.Configuration{
+	App.Run(iris.Addr(models.AppConfig.Listen), iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 false,
 		DisableInterruptHandler:           false,
 		DisablePathCorrection:             false,
@@ -67,53 +62,4 @@ func main() {
 		Charset:                           "UTF-8",
 	}))
 
-}
-
-func cmd(host, user string, port int) {
-	command := new(command.Command)
-	command.Host = host
-	command.Port = port
-	command.User = user
-	for index := 0; index < 10; index++ {
-		err := command.RemoteCommand("cd /home/ & ls")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-
-	}
-}
-
-func fileList(file string) (files []string) {
-	f, err := os.Open(file)
-	if err != nil {
-		log.Println("00000", err)
-		return
-	}
-
-	fInfo, err := f.Stat()
-	if err != nil {
-		log.Println("1", err)
-		return
-	}
-	if fInfo.IsDir() {
-		list, err := f.Readdir(0)
-		if err != nil {
-			log.Println("2", err)
-			return
-		}
-		for _, v := range list {
-			// log.Println(file + "/" + v.Name())
-
-			if v.IsDir() {
-				// 缺少基础路径
-				fileList(file + "/" + v.Name())
-			} else {
-				FILES = append(FILES, file+"/"+v.Name())
-				// log.Println(FILES)
-			}
-
-		}
-	}
-	return FILES
 }
