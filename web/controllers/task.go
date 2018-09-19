@@ -123,16 +123,16 @@ func (c *DefauleController) TaskNew(ctx iris.Context) {
 		return
 	}
 
-	s := session.Sess.Start(ctx)
-	userRole, err := s.GetInt("user_role")
-	if err != nil {
-		ctx.Write([]byte(fmt.Sprintf("%s", err)))
-		return
-	}
-	if userRole != 2 && project.Level == 3 {
-		ctx.WriteString("只有管理员能创建线上环境")
-		return
-	}
+	// s := session.Sess.Start(ctx)
+	// userRole, err := s.GetInt("user_role")
+	// if err != nil {
+	// 	ctx.Write([]byte(fmt.Sprintf("%s", err)))
+	// 	return
+	// }
+	// if userRole != 2 && project.Level == 3 {
+	// 	ctx.WriteString("只有管理员能创建线上环境")
+	// 	return
+	// }
 
 	command := new(command.Command)
 
