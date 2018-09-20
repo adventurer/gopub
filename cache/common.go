@@ -1,8 +1,8 @@
 package cache
 
 import (
+	"gopub/models"
 	"log"
-	"publish/models"
 )
 
 var (
