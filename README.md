@@ -17,7 +17,7 @@ ssh-keygen -t rsa
 
 
 2. git v2.0.0以上</br>
-[git最新版本安装参照](https://git-scm.com/book/zh/v1/%E8%B5%B7%E6%AD%A5-%E5%AE%89%E8%A3%85-Git)
+[git最新版本安装教程](https://git-scm.com/book/zh/v1/%E8%B5%B7%E6%AD%A5-%E5%AE%89%E8%A3%85-Git)
 
 
 功能清单：
