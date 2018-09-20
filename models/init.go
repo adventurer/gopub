@@ -51,5 +51,4 @@ func config() {
 		log.Fatal("解析配置文件出错：", err)
 		return
 	}
-
 }
