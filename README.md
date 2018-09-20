@@ -3,6 +3,14 @@ gopub
 项目说明：</br>
 gopub是一款由golang语言编写的代码发布系统,适用于golang,php,java,python等脚本代码的发布。</br>
 
+依赖：
+ssh免密码登陆
+```Bash
+ssh-keygen -t rsa
+```
+一路回车以后将生成的id_rsa.pub内容复制进服务器用户目录authorized_keys文件中。详细请参考相关教程。再次推荐一篇</br>
+[阮一峰的ssh登陆教程](http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html)
+
 功能清单：
 1. 版本文件发布
 2. 版本任意切换
