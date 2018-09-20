@@ -8,8 +8,9 @@ ssh免密码登陆
 ```Bash
 ssh-keygen -t rsa
 ```
-一路回车以后将生成的id_rsa.pub内容复制进服务器用户目录authorized_keys文件中。详细请参考相关教程。再次推荐一篇</br>
-[阮一峰的ssh登陆教程](http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html)
+一路回车以后将生成的id_rsa.pub内容复制进服务器用户目录authorized_keys文件中。详细请参考相关教程。这里推荐一篇</br>
+[阮一峰的ssh登陆教程](http://www.ruanyifeng.com/blog/2011/12/ssh_remote_login.html)</br>
+最后，如果需安装本软件的机器如果可以免密码登陆服务器，即可正常使用本软件了</br>
 
 功能清单：
 1. 版本文件发布
@@ -20,8 +21,8 @@ ssh-keygen -t rsa
 6. 发布后自定义命令
 6. 多机器发布
 
-使用说明：
-从源码构建：
+# 使用说明：
+### 从源码构建：
 编译：
 1. windows:
 ```Bash
