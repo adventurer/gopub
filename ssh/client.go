@@ -207,9 +207,11 @@ func (c *defaultClient) UploadFile(clientID, sourceFile, target string, task mod
 			tools.Logger.Warn(err)
 			return
 		}
-		// if time.Now().UnixNano()%1000000 == 0 {
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
-		// }
+		limiter := time.Tick(time.Second)
+		for {
+			<-limiter
+			websocket.Broadcast(websocket.Conn, fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
+		}
 	}
 
 	err = stdinPipe.Close()

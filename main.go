@@ -1,9 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"gopub/models"
 	"gopub/web/routes"
 	"gopub/websocket"
+	"os"
+
+	"time"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
@@ -12,6 +16,13 @@ import (
 var App = iris.New()
 
 func main() {
+	limiter := time.Tick(time.Second)
+
+	for { //会循环两次，前面往requests channel中发送了两个值
+		<-limiter //执行到这里，需要隔 200毫秒才继续往下执行，time.Tick(timer)上面已定义
+		fmt.Println("request", time.Now())
+	}
+	os.Exit(0)
 
 	customLogger := logger.New(logger.Config{
 		// Status displays status code
