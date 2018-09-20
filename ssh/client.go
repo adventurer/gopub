@@ -193,6 +193,7 @@ func (c *defaultClient) UploadFile(clientID, sourceFile, target string, task mod
 	if err != nil {
 		tools.Logger.Warn(err)
 	}
+	var tmp float32
 
 	for start, max := 0, len(data); start < max; start += DEFAULT_CHUNK_SIZE {
 
@@ -207,11 +208,15 @@ func (c *defaultClient) UploadFile(clientID, sourceFile, target string, task mod
 			tools.Logger.Warn(err)
 			return
 		}
-		limiter := time.Tick(time.Second)
-		for {
-			<-limiter
+		if (float32(end)/float32(len(data))*100)-tmp > 1.00 {
+			// log.Println(float32(end)/float32(len(data))*100, "-", tmp, "=", float32(end)/float32(len(data))*100-tmp)
+			websocket.Broadcast(websocket.Conn, fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
+			tmp = float32(end) / float32(len(data)) * 100
+		}
+		if end == len(data) {
 			websocket.Broadcast(websocket.Conn, fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
 		}
+
 	}
 
 	err = stdinPipe.Close()
