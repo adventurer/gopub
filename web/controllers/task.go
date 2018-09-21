@@ -255,6 +255,15 @@ func (c *DefauleController) TaskDel(ctx iris.Context) {
 	}
 	t := models.Task{Id: taskID}
 	task := t.Find(taskID)
+	if task.Status == 3 {
+		ctx.ViewLayout(iris.NoLayout)
+		ctx.ViewData("title", "错误")
+		ctx.ViewData("message", "都上线了就别想着删除了吧")
+		ctx.ViewData("url", `/task/index`)
+		ctx.View("error/401.html")
+		return
+	}
+
 	s := session.Sess.Start(ctx)
 	userid, err := s.GetInt("user_id")
 	if err != nil {
