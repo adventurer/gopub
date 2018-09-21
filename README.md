@@ -2,7 +2,7 @@ gopub
 ==============
 项目说明：</br>
 gopub是一款由golang语言编写的代码发布系统,适用于golang,php,java,python等脚本代码的发布。</br>
-[demo查看](http://demo.golangpub.com:8088)</br>
+[demo查看](http://demo.golangpub.com)</br>
 用户名：wuyang
 密码：w123123
 
