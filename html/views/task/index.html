@@ -113,23 +113,36 @@
                                 {{if eq $v.Task.Status 3}}
                                 <i class="fa fa-thumbs-up" data-toggle="tooltip" title="" data-original-title="搞定"></i>
                                 {{else}}
-                                <button onclick="taskDeploy('{{$v.Task.Id}}')" type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-paper-plane"></i></button>
-                                <a href="/task/del?id={{$v.Task.Id}}"><button type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-trash-o"></i></button></a>
+                                <a onclick="taskDeploy('{{$v.Task.Id}}')" class="tag tag-green" href="javascript:;">部署</a>
+                                <a class="tag tag-red sureToGo" href="/task/del?id={{$v.Task.Id}}">删除</a>
                                 {{end}}
                                 
                             </td>
                             <td>
                                 {{if ne $v.Task.Status 3}}
                                     {{if eq $.userrole 2}}
-                                    <a href="/task/audit?id={{$v.Task.Id}}&audit=0"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}通过</button></a>
-                                    <a href="/task/audit?id={{$v.Task.Id}}&audit=2"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 2}}<i class="fe fe-check mr-2"></i>{{end}}拒绝</button></a>
+                                    <span class="tag">
+                                            通过
+                                        <a href="/task/audit?id={{$v.Task.Id}}&audit=0" class="tag-addon tag-green">{{if eq $v.Task.Audit 0}}<i class="fe fe-check"></i>{{end}}  </a>
+                                    </span>
+
+                                    <span class="tag">
+                                            拒绝
+                                        <a href="/task/audit?id={{$v.Task.Id}}&audit=2" class="tag-addon tag-green">{{if eq $v.Task.Audit 2}}<i class="fe fe-check"></i>{{end}}  </a>
+                                    </span>
+
                                     {{else}}
                                         {{if eq $v.Task.Audit 0}}
-                                            审核通过
+                                            
+                                            <a class="tag" href="javsscript:;">审核通过</a>
+
                                         {{else if eq $v.Task.Audit 1}}
-                                            审核中
+                                            
+                                            <a class="tag" href="javsscript:;">审核中</a>
+
                                         {{else if eq $v.Task.Audit 2}}
-                                            审核拒绝
+                                            
+                                            <a class="tag" href="javsscript:;">审核拒绝</a>
                                         {{end}}
                                     {{end}}
                                 {{end}}
