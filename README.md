@@ -59,6 +59,11 @@ CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o gopub main.go
 ```
 请自行去掉斜杠
 
+最后请将数据库user表内自己的role设置为2，具有管理员权限
+```sql
+update user set role = 2;
+```
+
 下载编译版本：
 [下载](https://github.com/adventurer/gopub/releases/tag/latest)
 
