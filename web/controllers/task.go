@@ -206,7 +206,8 @@ func (c *DefauleController) TaskCommitLog(ctx iris.Context) {
 		log.Println(err)
 		return
 	}
-	ctx.WriteString(string(output))
+	tag := strings.LastIndex(string(output), "\n\n")
+	ctx.WriteString(string(output[tag+2:]))
 }
 
 // 新任务添加

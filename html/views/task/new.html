@@ -37,7 +37,7 @@
                         <div class="form-group">
                             <label class="form-label">选择分支(目前只支持master，其他选了也不起作用)</label>
                             <div class="input-group mb-3">
-                                <select name="Branch" class="custom-select" id="inputGroupSelect01">
+                                <select name="Branch" class="custom-select" id="inputGroupSelect01" disabled>
                                 {{range $k,$v := .branchList}}
                                     <option value="{{$v}}">{{$v}}</option>
                                 {{end}}
@@ -48,6 +48,7 @@
                             <label class="form-label">选择版本</label>
                             <div class="input-group mb-3">
                                 <select name="CommitId" onchange="commitList(this)" class="custom-select" id="inputGroupSelect02">
+                                    <option value="">选择版本以得到文件列表</option>
                                     {{range $k,$v := .logList}}
                                     <option  value="{{$v}}">{{$v}}</option>
                                     {{end}}
