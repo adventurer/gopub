@@ -14,7 +14,7 @@
                             <div class="col">
                                 <div class="form-group">
                                     <label class="form-label">上线单标题</label>
-                                    <input name="Title" class="form-control" placeholder="来个容易识别的呗" required>
+                                    <input id="title" name="Title" class="form-control" placeholder="来个容易识别的呗" required>
                                 </div>
                             </div>
                         </div>
@@ -32,7 +32,17 @@
                                     </label>
                                 </div>
                             </div>
-                            <textarea id="filearea" name="FileList" class="form-control" rows="10" required></textarea>
+                            <div class="row">
+                                <div class="col-8">
+                                        <label class="form-label">可手工添加额外的文件，一行一个</label>
+                                    <textarea id="filearea" name="FileList" class="form-control" rows="10" required></textarea>
+                                </div>
+                                <div class="col-4">
+                                        <label class="form-label">描述，不记录，也没必要修改</label>
+                                    <textarea id="desc" name="FileList" class="form-control" rows="10" disabled></textarea>
+                                </div>
+                            </div>
+                            
                         </div>
                         <div class="form-group">
                             <label class="form-label">选择分支(目前只支持master，其他选了也不起作用)</label>
@@ -70,10 +80,12 @@ function commitList(e){
         type: "post",
         url: "/task/filearea",
         data: {commit:$(e).val(), task:'{{.taskId}}'},
-        dataType: "text",
+        dataType: "json",
         success: function(data){
             console.log(data)
-            $("#filearea").val(data)
+            $("#filearea").val(data[2].trim())
+            $("#title").val(data[1].trim())
+            $("#desc").val(data[0].trim())
         }
     });
 }

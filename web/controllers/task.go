@@ -206,8 +206,15 @@ func (c *DefauleController) TaskCommitLog(ctx iris.Context) {
 		log.Println(err)
 		return
 	}
-	tag := strings.LastIndex(string(output), "\n\n")
-	ctx.WriteString(string(output[tag+2:]))
+	// tag1 := strings.Index(string(output), "\n\n")
+	// tag2 := strings.LastIndex(string(output), "\n\n")
+	// var result [3]string
+	// result[0] = strings.TrimSpace(string(output[:tag1]))
+	// result[1] = strings.TrimSpace(string(output[tag1:tag2]))
+	// result[2] = strings.TrimSpace(string(output[tag2:]))
+
+	result := strings.Split(string(output), "\n\n")
+	ctx.JSON(result)
 }
 
 // 新任务添加
