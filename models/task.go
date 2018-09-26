@@ -3,6 +3,7 @@ package models
 import (
 	"log"
 	"strconv"
+	"time"
 )
 
 func (p *Task) List(id, page int, title string) (list []Task) {
@@ -106,5 +107,45 @@ func (p *Task) SetAudit(id, audit int) (affected int64, err error) {
 	if err != nil {
 		log.Println(err.Error())
 	}
+	return
+}
+
+// 统计发布量-全部
+func (p *Task) PubCount() (pubcount []PubCount, err error) {
+	sql := "select project_id Id,count(1) Cnt from task where project_id in(SELECT id from project) group by project_id order by cnt desc;"
+	err = Xorm.Sql(sql).Find(&pubcount)
+
+	return
+}
+
+// 统计发布量-本周
+func (p *Task) PubCountMonth() (pubcount []PubCount, err error) {
+	t := time.Now()
+	// year := t.Year()
+	// month := t.Month()
+	// day := t.Day()
+	timeStr := t.Format("2006-01")
+
+	sql := "select project_id Id,count(1) Cnt from task where project_id in(SELECT id from project) and created_at > \"" + timeStr + "\" group by project_id order by cnt desc;"
+	err = Xorm.Sql(sql).Find(&pubcount)
+
+	return
+}
+
+// 统计发布量-全部
+func (p *Task) PubManCount() (pubcount []PubCount, err error) {
+	sql := "select user_id Id,count(1) Cnt from task where user_id in(SELECT id from user) group by user_id order by cnt desc;"
+	err = Xorm.Sql(sql).Find(&pubcount)
+
+	return
+}
+
+// 统计发布量-本周
+func (p *Task) PubManCountMonth() (pubcount []PubCount, err error) {
+	t := time.Now()
+	timeStr := t.Format("2006-01")
+	sql := "select user_id Id,count(1) Cnt from task where user_id in(SELECT id from user) and created_at > \"" + timeStr + "\" group by user_id order by cnt desc;"
+	err = Xorm.Sql(sql).Find(&pubcount)
+
 	return
 }

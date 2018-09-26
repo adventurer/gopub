@@ -129,6 +129,12 @@ type Version struct {
 	Task   Task   `版本上线单`
 }
 
+type PubCount struct {
+	Id   int
+	Name string
+	Cnt  int
+}
+
 type BasicReturn struct {
 	Sta  int         `状态吗`
 	Msg  string      `消息`

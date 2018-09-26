@@ -1,5 +1,221 @@
+
+<script src="assets/node_modules/chart.js/dist/Chart.js"></script>
+
+
 <div class="row clearfix">
-    <div class="col-12 text-center">
-        welcome your own page.
+    <div class="col-6">
+        <div class="card">
+            <div class="card-body">
+                    <div class="carousel slide" data-ride="carousel">
+                        <div class="carousel-inner" role="listbox">
+                            <div class="carousel-item text-center">
+                                <div class="col-12">
+                                    <canvas id="myChart" width="" height="{{.count}}"></canvas>
+        
+                                </div>                                
+                            </div>
+                            <div class="carousel-item text-center active">
+                                <div class="col-12">
+                                    <canvas id="myChart1" width="" height="{{.count}}"></canvas>
+                                </div>
+                            </div>							
+                        </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6">
+            <div class="card">
+                <div class="card-body">
+                        <div class="carousel slide" data-ride="carousel">
+                            <div class="carousel-inner" role="listbox">
+                                <div class="carousel-item text-center">
+                                    <div class="col-12">
+                                        <canvas id="myChart3" width="" height="{{.count}}"></canvas>
+            
+                                    </div>                                
+                                </div>
+                                <div class="carousel-item text-center active">
+                                    <div class="col-12">
+                                        <canvas id="myChart4" width="" height="{{.count}}"></canvas>
+                                    </div>
+                                </div>							
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    <div class="col-6">
+            
     </div>
 </div>
+<!-- 按照项目数统计 -->
+<script>
+var ctx = document.getElementById("myChart");
+var myChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+        labels: [
+            {{range $k,$v := .pubcount}}
+            "{{$v.Name}}",
+            {{end}}
+            ],
+        datasets: [{
+            label: '发布量 - 全部',
+            data: [
+            {{range $k,$v := .pubcount}}
+            {{$v.Cnt}},
+            {{end}}
+            ],
+            backgroundColor: [
+            {{range $k,$v := .pubcount}}
+            "rgba(54, 162, 235, 0.2)",
+            {{end}}
+            ],
+            borderColor: [
+            {{range $k,$v := .pubcount}}
+            "rgba(54, 162, 235, 1)",
+            {{end}}
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+
+<script>
+        var ctx = document.getElementById("myChart1");
+        var myChart = new Chart(ctx, {
+            type: 'horizontalBar',
+            data: {
+                labels: [
+                    {{range $k,$v := .pubcountmonth}}
+                    "{{$v.Name}}",
+                    {{end}}
+                    ],
+                datasets: [{
+                    label: '发布量 - 最近一月',
+                    data: [
+                    {{range $k,$v := .pubcountmonth}}
+                    {{$v.Cnt}},
+                    {{end}}
+                    ],
+                    backgroundColor: [
+                    {{range $k,$v := .pubcountmonth}}
+                    "rgba(54, 162, 235, 0.2)",
+                    {{end}}
+                    ],
+                    borderColor: [
+                    {{range $k,$v := .pubcountmonth}}
+                    "rgba(54, 162, 235, 1)",
+                    {{end}}
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true
+                        }
+                    }]
+                }
+            }
+        });
+        </script>
+
+
+<!-- 按照发布人统计 -->
+<script>
+var ctx = document.getElementById("myChart3");
+var myChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+        labels: [
+            {{range $k,$v := .pubmancount}}
+            "{{$v.Name}}",
+            {{end}}
+            ],
+        datasets: [{
+            label: '发布量 - 全部',
+            data: [
+            {{range $k,$v := .pubmancount}}
+            {{$v.Cnt}},
+            {{end}}
+            ],
+            backgroundColor: [
+            {{range $k,$v := .pubmancount}}
+            "rgba(54, 162, 235, 0.2)",
+            {{end}}
+            ],
+            borderColor: [
+            {{range $k,$v := .pubmancount}}
+            "rgba(54, 162, 235, 1)",
+            {{end}}
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
+
+<script>
+var ctx = document.getElementById("myChart4");
+var myChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {
+        labels: [
+            {{range $k,$v := .pubmancountmonth}}
+            "{{$v.Name}}",
+            {{end}}
+            ],
+        datasets: [{
+            label: '发布量 - 最近一月',
+            data: [
+            {{range $k,$v := .pubmancountmonth}}
+            {{$v.Cnt}},
+            {{end}}
+            ],
+            backgroundColor: [
+            {{range $k,$v := .pubmancountmonth}}
+            "rgba(54, 162, 235, 0.2)",
+            {{end}}
+            ],
+            borderColor: [
+            {{range $k,$v := .pubmancountmonth}}
+            "rgba(54, 162, 235, 1)",
+            {{end}}
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+});
+</script>
