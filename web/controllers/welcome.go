@@ -72,6 +72,6 @@ func (c *DefauleController) Welcome(ctx iris.Context) {
 	ctx.ViewData("pubmancount", PubManCount)
 	ctx.ViewData("pubmancountmonth", PubManCountMonth)
 
-	ctx.ViewData("count", len(pubcount)*10)
+	ctx.ViewData("count", 100+len(pubcount)*10)
 	ctx.View("welcome.html")
 }
