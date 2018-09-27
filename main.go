@@ -35,6 +35,8 @@ func main() {
 		// MessageHeaderKeys: []string{"User-Agent"},
 	})
 
+	App.Favicon("./favicon.ico")
+
 	App.Use(customLogger)
 
 	// App.Logger().SetLevel("debug")

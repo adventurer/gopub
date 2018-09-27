@@ -5,5 +5,5 @@
 	"DBUser": "root",
 	"DBPass": "112215334",
 	"DBName": "pazu",
-	"SqlLog": true
+	"SqlLog": false
 }
