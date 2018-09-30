@@ -293,13 +293,15 @@ func (c *DefauleController) TaskDel(ctx iris.Context) {
 		return
 	}
 
-	if (task.UserId != userid && userrole != 2) || task.UserId != userid {
-		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("title", "不能删除其他人的上线单")
-		ctx.ViewData("message", "总之这样子是不好的")
-		ctx.ViewData("url", `/task/index`)
-		ctx.View("error/401.html")
-		return
+	if task.UserId != userid {
+		if userrole != 2 {
+			ctx.ViewLayout(iris.NoLayout)
+			ctx.ViewData("title", "不能删除其他人的上线单")
+			ctx.ViewData("message", "总之这样子是不好的")
+			ctx.ViewData("url", `/task/index`)
+			ctx.View("error/401.html")
+			return
+		}
 	}
 
 	t.Del()
