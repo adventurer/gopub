@@ -40,12 +40,10 @@
                             <th>项目</th>
                             <th>上线标题</th>
                             <th>文件列表</th>
-                            <th width="300px">发布进度</th>
+                            <th>发布进度</th>
                             <th>版本</th>
                             <th>部署</th>
                             <th>审核</th>
-
-
                         </tr>
                     </thead>
                     <tbody>
@@ -63,7 +61,7 @@
                                         class="badge badge-success">列表</span>{{end}}</div>
                             </td>
                             <td>
-                                <div>
+                                <div style="width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">
                                     {{$v.Task.Title}}
                                 </div>
                                 <div class="small text-muted">发布于: {{$v.Task.CreatedAt}}</div>
