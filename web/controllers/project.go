@@ -29,7 +29,17 @@ func (c *DefauleController) ProjectDel(ctx iris.Context) {
 		ctx.WriteString(fmt.Sprintf("%s", err))
 		return
 	}
+
 	p := models.Project{Id: id}
+	p1, err := p.Find(id)
+	if err != nil {
+		log.Println(err)
+	}
+	log.Printf("%#v", p1)
+	cmd := "rm -rf ./repos/" + path.Base(p1.DeployFrom)
+	localCommand := new(command.Command)
+	localCommand.LocalCommand(cmd)
+
 	p.Del()
 	cache.CacheProject()
 	ctx.Redirect("/project/index", 302)
