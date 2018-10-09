@@ -81,6 +81,7 @@ func (c *defaultClient) Connect() (clientID string, err error) {
 	tools.Logger.Infof("connect server ssh -p %d %s@%s\n", c.node.Port, c.node.User, c.node.Host)
 	client[clientID], err = ssh.Dial("tcp", fmt.Sprintf("%s:%d", c.node.Host, c.node.Port), c.clientConfig)
 	if err != nil {
+		websocket.Broadcast(websocket.Conn, fmt.Sprintf("ssh连接失败，请检查是否为服务器添加公钥:%s:%d", c.node.Host, c.node.Port))
 		return "", err
 	}
 	return
