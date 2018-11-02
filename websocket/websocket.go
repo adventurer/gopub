@@ -1,7 +1,9 @@
 package websocket
 
 import (
+	"log"
 	"sync"
+	"time"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/websocket"
@@ -9,15 +11,15 @@ import (
 
 var Conn = make(map[websocket.Connection]bool)
 
-// func init() {
-// 	go func() {
-// 		for {
-// 			log.Println(Conn)
-// 			time.Sleep(1 * time.Second)
-// 		}
-// 	}()
+func init() {
+	go func() {
+		for {
+			log.Printf("%#v\n", Conn)
+			time.Sleep(1 * time.Second)
+		}
+	}()
 
-// }
+}
 
 func SetupWebsocket(app *iris.Application) {
 	// create our echo websocket server
@@ -67,6 +69,7 @@ func handleConnection(c websocket.Connection) {
 func Broadcast(Conn map[websocket.Connection]bool, message string) {
 	for k := range Conn {
 		k.To("/echo").Emit("chat", message)
+		break
 	}
 }
 
