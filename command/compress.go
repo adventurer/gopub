@@ -119,7 +119,6 @@ func compressDir(srcDirPath string, recPath string, tw *tar.Writer) error {
 
 func compressFile(srcFile string, recPath string, tw *tar.Writer, fi os.FileInfo) error {
 	if fi.IsDir() {
-		return nil
 		hdr := new(tar.Header)
 		hdr.Name = recPath + "/"
 		hdr.Typeflag = tar.TypeDir

@@ -1,9 +1,7 @@
 package websocket
 
 import (
-	"log"
 	"sync"
-	"time"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/websocket"
@@ -12,12 +10,12 @@ import (
 var Conn = make(map[websocket.Connection]bool)
 
 func init() {
-	go func() {
-		for {
-			log.Printf("%#v\n", Conn)
-			time.Sleep(1 * time.Second)
-		}
-	}()
+	// go func() {
+	// 	for {
+	// 		log.Printf("%#v\n", Conn)
+	// 		time.Sleep(1 * time.Second)
+	// 	}
+	// }()
 
 }
 
