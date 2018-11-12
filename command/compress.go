@@ -4,6 +4,7 @@ import (
 	"archive/tar"
 	"compress/gzip"
 	"gopub/models"
+	"gopub/tools"
 	"io"
 	"os"
 	"path"
@@ -85,6 +86,7 @@ func CompressFiles(files []string, project *models.Project, destFilePath string)
 }
 
 func compressDir(srcDirPath string, recPath string, tw *tar.Writer) error {
+	tools.Logger.Info("compress dir:", srcDirPath)
 	dir, err := os.Open(srcDirPath)
 	if err != nil {
 		return err
@@ -98,7 +100,8 @@ func compressDir(srcDirPath string, recPath string, tw *tar.Writer) error {
 	for _, fi := range fis {
 		curPath := srcDirPath + "/" + fi.Name()
 
-		if fi.Name() != ".git" {
+		if fi.Name() == ".git" {
+			tools.Logger.Info(fi.Name(), "continue")
 			continue
 		}
 
@@ -118,7 +121,9 @@ func compressDir(srcDirPath string, recPath string, tw *tar.Writer) error {
 }
 
 func compressFile(srcFile string, recPath string, tw *tar.Writer, fi os.FileInfo) error {
+	tools.Logger.Info("compress file:", srcFile)
 	if fi.IsDir() {
+		return nil
 		hdr := new(tar.Header)
 		hdr.Name = recPath + "/"
 		hdr.Typeflag = tar.TypeDir
