@@ -66,12 +66,12 @@
                                     {{if eq $v.Audit 0}}
                                     <span class="tag">
                                             关闭 
-                                        <a href="/project/audit?id={{$v.Id}}&audit=1" class="tag-addon tag-green"><i class="fe fe-check"></i></a>
+                                        <a href="/project/audit?id={{$v.Id}}&audit=1" class="tag-addon tag-green"><i class="fa fa-check"></i></a>
                                     </span>
                                     {{else if eq $v.Audit 1}}
                                     <span class="tag">
                                             开启 
-                                        <a href="/project/audit?id={{$v.Id}}&audit=0" class="tag-addon tag-green"><i class="fe fe-x"></i></a>
+                                        <a href="/project/audit?id={{$v.Id}}&audit=0" class="tag-addon tag-green"><i class="fa fa-ban"></i></a>
                                     </span>
                                     {{end}}
                                 </td>
