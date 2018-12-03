@@ -51,6 +51,7 @@ func (c *DefauleController) UserLoginSubmit(ctx iris.Context) {
 
 // 注册提交
 func (c *DefauleController) UserRegisterSubmit(ctx iris.Context) {
+	return
 	user := models.User{}
 	if err := ctx.ReadForm(&user); err != nil {
 		ctx.WriteString(fmt.Sprintf("%s", err))
