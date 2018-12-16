@@ -3,6 +3,8 @@ package controllers
 import (
 	"fmt"
 	"gopub/web/session"
+	"gopub/websocket"
+	"log"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/sessions"
@@ -10,6 +12,15 @@ import (
 
 type DefauleController struct {
 	Sess *sessions.Session
+}
+
+func (c *DefauleController) Echo(ctx iris.Context) {
+	log.Println("run echo")
+	ws, err := websocket.Upgrader.Upgrade(ctx.ResponseWriter().Naive(), ctx.Request(), nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	websocket.Clients[ws] = true
 }
 
 // 保持登陆

@@ -9,7 +9,7 @@ import (
 func (p *Task) List(id, page int, title string) (list []Task) {
 	var err error
 	list = make([]Task, 0)
-
+	var limit = 15
 	condition := " 1 "
 
 	if id >= 0 {
@@ -20,9 +20,9 @@ func (p *Task) List(id, page int, title string) (list []Task) {
 	}
 	// err = Xorm.Alias("o").Where(condition, id).Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
 	if condition != "" {
-		err = Xorm.Alias("o").Where(condition).Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
+		err = Xorm.Alias("o").Where(condition).Limit(limit, (page-1)*10).OrderBy("id desc").Find(&list)
 	} else {
-		err = Xorm.Alias("o").Limit(10, (page-1)*10).OrderBy("id desc").Find(&list)
+		err = Xorm.Alias("o").Limit(limit, (page-1)*10).OrderBy("id desc").Find(&list)
 	}
 	if err != nil {
 		log.Println(err.Error())

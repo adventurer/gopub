@@ -18,9 +18,8 @@ import (
 func (c *DefauleController) ProjectIndex(ctx iris.Context) {
 	p := new(models.Project)
 	projects := p.List()
-
-	ctx.ViewData("project", projects)
-	ctx.View("project/index.html")
+	data, _ := json.Marshal(projects)
+	ctx.Write(data)
 }
 
 func (c *DefauleController) ProjectDel(ctx iris.Context) {
@@ -263,17 +262,18 @@ func (c *DefauleController) ProjectAudit(ctx iris.Context) {
 		return
 	}
 
+	result := models.NewDefaultReturn()
+
 	p := models.Project{}
 	_, err = p.SetAudit(id, audit)
 	if err != nil {
-		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("title", "错误")
-		ctx.ViewData("message", fmt.Sprintf("%s", err))
-		ctx.ViewData("url", `/project/index`)
-		ctx.View("error/401.html")
-		return
+		result.Msg = fmt.Sprintf("%s", err)
 	}
-	ctx.Redirect("/project/index")
+	result.Sta = 1
+	result.Msg = "成功"
+	data, _ := json.Marshal(result)
+	ctx.Write(data)
+
 }
 
 // -----------------

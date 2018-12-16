@@ -38,13 +38,13 @@ func (c *Command) RemoteCommand(cmd string) error {
 		return err
 	}
 	tools.Logger.Infof("run remote command@%s@%d:%s", c.Host, c.Port, cmd)
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("run remote command@%s@%d:%s", c.Host, c.Port, cmd))
+	websocket.Broadcast(fmt.Sprintf("run remote command@%s@%d:%s", c.Host, c.Port, cmd))
 
 	output, err := client.Cmd(clientID, cmd)
 	if err == nil && len(output) <= 0 {
 		output = []byte("success")
 	}
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("result@%s@%d:%s", c.Host, c.Port, output))
+	websocket.Broadcast(fmt.Sprintf("result@%s@%d:%s", c.Host, c.Port, output))
 	tools.Logger.Info("\t", string(output))
 
 	return err
@@ -56,13 +56,13 @@ func (c *Command) LocalCommand(cmd string) error {
 	var handel *exec.Cmd
 	// 执行单个shell命令时, 直接运行即可
 	tools.Logger.Info("run local command:", cmd)
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("run local command:%s", cmd))
+	websocket.Broadcast(fmt.Sprintf("run local command:%s", cmd))
 
 	handel = exec.Command("/bin/sh", "-c", cmd)
 	output, err = handel.Output()
 
 	tools.Logger.Info("\t", string(output))
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("result:%s", output))
+	websocket.Broadcast(fmt.Sprintf("result:%s", output))
 
 	return err
 }

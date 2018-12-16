@@ -15,9 +15,9 @@ var (
 func (r *Routes) InitRoute(app *iris.Application) {
 
 	// 用户处理
-	app.Get("/", func(ctx iris.Context) {
-		ctx.Redirect("/user/login", 302)
-	})
+	// app.Get("/", func(ctx iris.Context) {
+	// 	ctx.Redirect("/user/login", 302)
+	// })
 
 	app.Get("/user/login", func(ctx iris.Context) {
 		ctx.ViewLayout(iris.NoLayout)
@@ -39,6 +39,8 @@ func (r *Routes) InitRoute(app *iris.Application) {
 		ctx.ViewLayout(iris.NoLayout)
 		ctx.View("error/401.html")
 	})
+
+	app.Any("/echo", controller.Echo)
 
 	adminRoutes := app.Party("/", controller.SessionInit, controller.LoginCheck)
 	{
@@ -65,7 +67,11 @@ func (r *Routes) InitRoute(app *iris.Application) {
 		// 文件检查
 		adminRoutes.Any("/filecheck/index", controller.FileIndex)
 
-		// 版本切换
+		// 版本信息
+		adminRoutes.Any("/version/list", controller.AdminCheck, controller.VersionList)
+
+		adminRoutes.Any("/version/info", controller.AdminCheck, controller.VersionInfo)
+
 		adminRoutes.Any("/version/index", controller.AdminCheck, controller.VersionIndex)
 
 		adminRoutes.Any("/version/switch", controller.AdminCheck, controller.VersionSwitch)

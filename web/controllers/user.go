@@ -3,6 +3,7 @@ package controllers
 import (
 	"crypto/md5"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"gopub/cache"
 	"gopub/models"
@@ -16,6 +17,12 @@ import (
 
 // 登入
 func (c *DefauleController) UserLoginSubmit(ctx iris.Context) {
+	type token struct {
+		Token   string
+		Expired int64
+	}
+	var accessToken token
+
 	user := models.User{}
 	if err := ctx.ReadForm(&user); err != nil {
 		ctx.WriteString(fmt.Sprintf("%s", err))
@@ -43,7 +50,13 @@ func (c *DefauleController) UserLoginSubmit(ctx iris.Context) {
 		// 登陆后必须刷新缓存
 		cache.CacheUserHasTable()
 		cache.CacheUsers()
-		ctx.Redirect("/task/index")
+
+		ctx.SetCookieKV("token", access)
+
+		accessToken.Token = access
+		accessToken.Expired = time.Now().Unix()
+		data, _ := json.Marshal(accessToken)
+		ctx.Write(data)
 	} else {
 		ctx.WriteString(fmt.Sprintf("%s", "账号或密码错误"))
 	}

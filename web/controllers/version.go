@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"gopub/command"
 	"gopub/models"
@@ -24,7 +25,69 @@ func (c *DefauleController) VersionCtl(ctx iris.Context) {
 	ctx.View("version/index.html")
 }
 
-// 版本列表
+// 版本详情
+func (c *DefauleController) VersionInfo(ctx iris.Context) {
+	commit := ctx.URLParam("commit")
+	projectId := ctx.URLParam("project")
+
+	commit = commit[:7]
+
+	t1 := new(models.Project)
+	project, err := t1.Find(projectId)
+	if err != nil {
+		ctx.WriteString(fmt.Sprintf("%s", err))
+		return
+	}
+
+	command := new(command.Command)
+	output, err := command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git log -1 " + commit + " --name-only")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	// tag1 := strings.Index(string(output), "\n\n")
+	// tag2 := strings.LastIndex(string(output), "\n\n")
+	// var result [3]string
+	// result[0] = strings.TrimSpace(string(output[:tag1]))
+	// result[1] = strings.TrimSpace(string(output[tag1:tag2]))
+	// result[2] = strings.TrimSpace(string(output[tag2:]))
+
+	result := strings.Split(strings.TrimSpace(string(output)), "\n\n")
+	ctx.JSON(result)
+}
+
+// 根据项目id获取版本列表
+func (c *DefauleController) VersionList(ctx iris.Context) {
+	id := ctx.URLParam("id")
+
+	t1 := new(models.Project)
+	project, err := t1.Find(id)
+	if err != nil {
+		ctx.WriteString(fmt.Sprintf("%s", err))
+		return
+	}
+
+	command := new(command.Command)
+
+	_, err = command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git pull")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	logList, err := command.LocalCommandOutput("cd " + project.DeployFrom + " && " + "git log -20 --pretty=\"%h - %an - %s - %cD\"")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	logListtArr := strings.Split((strings.TrimSpace(string(logList))), "\n")
+
+	data, _ := json.Marshal(logListtArr)
+	ctx.Write(data)
+}
+
+// 线上版本列表
 func (c *DefauleController) VersionIndex(ctx iris.Context) {
 	projectId, err := ctx.URLParamInt("id")
 	if err != nil {

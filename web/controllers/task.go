@@ -20,9 +20,13 @@ import (
 )
 
 type taskList struct {
-	Task     models.Task
-	Username string
+	Id       int
 	Project  string
+	Title    string
+	Files    string
+	Version  string
+	Status   int
+	Username string
 }
 
 func (c *DefauleController) TaskIndex(ctx iris.Context) {
@@ -38,8 +42,8 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 
 	projectID, _ := ctx.URLParamInt("id")
 
-	p := new(models.Project)
-	projects := p.List()
+	// p := new(models.Project)
+	// projects := p.List()
 
 	t := new(models.Task)
 	tasks := t.List(projectID, page, title)
@@ -51,20 +55,27 @@ func (c *DefauleController) TaskIndex(ctx iris.Context) {
 		var projectname = cache.MemProjectIdx[v.ProjectId]
 		var tasklist taskList
 
-		tasklist.Task = task
+		tasklist.Id = task.Id
 		tasklist.Username = username
 		tasklist.Project = projectname
+		tasklist.Title = task.Title
+		tasklist.Files = task.FileList
+		tasklist.Version = task.LinkId
+		tasklist.Status = task.Status
+
 		tasklists = append(tasklists, tasklist)
 	}
 
-	ctx.ViewData("project", projects)
-	ctx.ViewData("tasklist", tasklists)
-	ctx.ViewData("page", page)
-	ctx.ViewData("page1", page-1)
-	ctx.ViewData("page2", page+1)
-	ctx.ViewData("id", projectID)
-	ctx.ViewData("title", title)
-	ctx.View("task/index.html")
+	// ctx.ViewData("project", projects)
+	// ctx.ViewData("tasklist", tasklists)
+	// ctx.ViewData("page", page)
+	// ctx.ViewData("page1", page-1)
+	// ctx.ViewData("page2", page+1)
+	// ctx.ViewData("id", projectID)
+	// ctx.ViewData("title", title)
+	// ctx.View("task/index.html")
+
+	ctx.JSON(tasklists)
 }
 
 // 审核上线单
@@ -181,8 +192,8 @@ func (c *DefauleController) TaskNew(ctx iris.Context) {
 func (c *DefauleController) TaskChoose(ctx iris.Context) {
 	p := models.Project{}
 	list := p.List()
-	ctx.ViewData("list", list)
-	ctx.View("task/choose.html")
+	data, _ := json.Marshal(list)
+	ctx.Write(data)
 }
 
 // 查询版本记录
@@ -243,15 +254,17 @@ func (c *DefauleController) TaskNewCommit(ctx iris.Context) {
 	task.LinkId = time.Now().Format("20060102-150405")
 	task.ExLinkId = lastRecord.LinkId
 	_, err = t.New(task)
+
+	result := models.NewDefaultReturn()
 	if err != nil {
-		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("title", "错误")
-		ctx.ViewData("message", fmt.Sprintf("%s", err))
-		ctx.ViewData("url", `/task/index`)
-		ctx.View("error/401.html")
-		return
+
+		result.Sta = 0
+		result.Msg = fmt.Sprintf("%s", err)
 	}
-	ctx.Redirect("/task/index", 302)
+	result.Sta = 1
+	result.Msg = "成功"
+	data, _ := json.Marshal(result)
+	ctx.Write(data)
 }
 
 // 删除提交
@@ -263,49 +276,48 @@ func (c *DefauleController) TaskDel(ctx iris.Context) {
 	}
 	t := models.Task{Id: taskID}
 	task := t.Find(taskID)
+
+	result := models.NewDefaultReturn()
 	if task.Status == 3 {
-		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("title", "错误")
-		ctx.ViewData("message", "都上线了就别想着删除了吧")
-		ctx.ViewData("url", `/task/index`)
-		ctx.View("error/401.html")
+		result.Sta = 0
+		result.Msg = "都上线了就别想着删除了吧"
+		data, _ := json.Marshal(result)
+		ctx.Write(data)
 		return
 	}
 
 	s := session.Sess.Start(ctx)
 	userid, err := s.GetInt("user_id")
 	if err != nil {
-		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("title", "错误")
-		ctx.ViewData("message", fmt.Sprintf("%s", err))
-		ctx.ViewData("url", `/task/index`)
-		ctx.View("error/401.html")
+		result.Msg = fmt.Sprintf("%s", err)
+		data, _ := json.Marshal(result)
+		ctx.Write(data)
 		return
 	}
 
 	userrole, err := s.GetInt("user_role")
 	if err != nil {
-		ctx.ViewLayout(iris.NoLayout)
-		ctx.ViewData("title", "错误")
-		ctx.ViewData("message", fmt.Sprintf("%s", err))
-		ctx.ViewData("url", `/task/index`)
-		ctx.View("error/401.html")
+
+		result.Msg = fmt.Sprintf("%s", err)
+		data, _ := json.Marshal(result)
+		ctx.Write(data)
 		return
 	}
 
 	if task.UserId != userid {
 		if userrole != 2 {
-			ctx.ViewLayout(iris.NoLayout)
-			ctx.ViewData("title", "不能删除其他人的上线单")
-			ctx.ViewData("message", "总之这样子是不好的")
-			ctx.ViewData("url", `/task/index`)
-			ctx.View("error/401.html")
+			result.Msg = "不能删除其他人的上线单"
+			data, _ := json.Marshal(result)
+			ctx.Write(data)
 			return
 		}
 	}
 
 	t.Del()
-	ctx.Redirect("/task/index", 302)
+	result.Sta = 1
+	result.Msg = "成功"
+	data, _ := json.Marshal(result)
+	ctx.Write(data)
 }
 
 // 部署动作
@@ -319,7 +331,7 @@ func (c *DefauleController) TaskDeploy(ctx iris.Context) {
 	t := new(models.Task)
 	task := t.Find(id)
 	if task.Audit != 0 {
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "0%", "请等待审核"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "0%", "请等待审核"))
 		return
 	}
 
@@ -330,7 +342,7 @@ func (c *DefauleController) TaskDeploy(ctx iris.Context) {
 		return
 	}
 	if user_id != task.UserId {
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "0%", "不能部署其他人的上线单"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "0%", "不能部署其他人的上线单"))
 		return
 	}
 
@@ -357,6 +369,7 @@ func (c *DefauleController) TaskDeploy(ctx iris.Context) {
 
 	result := models.NewDefaultReturn()
 	result.Sta = 1
+	result.Msg = "成功"
 	blob, _ := json.Marshal(result)
 	ctx.Write(blob)
 }
@@ -365,7 +378,7 @@ func (c *DefauleController) TaskDeploy(ctx iris.Context) {
 func fullDeploy(project *models.Project, task *models.Task) (err error) {
 
 	// 更新本地代码到最新版本
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "10%", "更新本地仓库"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "10", "更新本地仓库"))
 
 	currentEnv := new(command.Command)
 
@@ -376,7 +389,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 	}
 
 	// 文件打包
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "20%", "打包文件"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "20", "打包文件"))
 	destFile, err := command.Compress(project.DeployFrom, "repos/"+task.LinkId)
 	if err != nil {
 		tools.Logger.Info(err.Error())
@@ -394,11 +407,11 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		remoteEnv.User = project.ReleaseUser
 
 		// 上传文件
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "30", "上传压缩包"))
 		err = remoteEnv.FileUpload(destFile, project.ReleaseLibrary+path.Base(project.DeployFrom)+"/"+task.LinkId+".tar.gz", *task)
 		if err != nil {
 			tools.Logger.Info(err)
-			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包出错"))
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "30", "上传压缩包出错"))
 			return
 		}
 	}
@@ -412,7 +425,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		remoteEnv.User = project.ReleaseUser
 
 		// 远程释放文件
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "40%", "释放文件"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "40", "释放文件"))
 		err = remoteEnv.RemoteCommand("tar -xvf " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + task.LinkId + ".tar.gz -C " + project.ReleaseLibrary + path.Base(project.DeployFrom))
 		if err != nil {
 			tools.Logger.Info(err)
@@ -420,7 +433,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		}
 
 		// 链接
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "50%", "链接文件"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "50", "链接文件"))
 		err = remoteEnv.RemoteCommand("ln -sfn " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + task.LinkId + " " + project.ReleaseTo + path.Base(project.DeployFrom))
 		if err != nil {
 			tools.Logger.Info(err)
@@ -428,7 +441,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 		}
 
 		// 删除远程压缩包
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "60%", "删除远程压缩包"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "60", "删除远程压缩包"))
 		err = remoteEnv.RemoteCommand("rm -rf " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/*.tar.gz")
 		if err != nil {
 			tools.Logger.Info(err)
@@ -437,7 +450,7 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 
 		// 部署后命令
 		if project.PostRelease != "" {
-			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "70%", "执行部署后命令"))
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "70", "执行部署后命令"))
 			cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
 			for _, cmd := range cmds {
 				err = remoteEnv.RemoteCommand(cmd)
@@ -451,14 +464,14 @@ func fullDeploy(project *models.Project, task *models.Task) (err error) {
 	}
 
 	// 删除本地压缩包
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "80%", "删除本地压缩包"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "80", "删除本地压缩包"))
 	err = os.Remove(destFile)
 	if err != nil {
 		tools.Logger.Info(err.Error())
 		return
 	}
 
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "100%", "完成"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "100", "完成"))
 
 	return
 }
@@ -472,22 +485,22 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 
 	// 更新本地代码到最新版本
 	cmdEnv := new(command.Command)
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "10%", "更新本地仓库"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "10", "更新本地仓库"))
 	err = cmdEnv.LocalCommand("git -C " + project.DeployFrom + " pull")
 	if err != nil {
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "10%", "更新本地仓库出错"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "10", "更新本地仓库出错"))
 		tools.Logger.Info(err)
 		return
 	}
 
 	// 文件打包
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "20%", "打包文件"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "20", "打包文件"))
 	var destFile string
 	destFile, err = command.CompressFiles(files, project, "repos/"+task.LinkId)
 	if err != nil {
 		tools.Logger.Info(err)
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "20%", "打包文件出错"))
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("compress files err:%s", err))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "20", "打包文件出错"))
+		websocket.Broadcast(fmt.Sprintf("compress files err:%s", err))
 		return
 	}
 
@@ -500,11 +513,11 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 		cmdEnv.User = project.ReleaseUser
 
 		// 上传服务器
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "30", "上传压缩包"))
 		err = cmdEnv.FileUpload(destFile, project.ReleaseLibrary+path.Base(project.DeployFrom)+"/"+task.LinkId+".tar.gz", *task)
 		if err != nil {
 			tools.Logger.Info(err)
-			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "30%", "上传压缩包出错"))
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "30", "上传压缩包出错"))
 			return
 		}
 	}
@@ -517,40 +530,46 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 		cmdEnv.User = project.ReleaseUser
 
 		// 备份当前版本
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "40%", "备份当前版本"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "40", "备份当前版本"))
 		err = cmdEnv.RemoteCommand("cp -arf " + project.ReleaseTo + path.Base(project.DeployFrom) + "/. " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + task.LinkId)
 		if err != nil {
 			tools.Logger.Info(err)
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "40", "备份当前版本出错"))
 			return
 		}
 
 		// 合并文件
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "50%", "合并文件"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "50", "合并文件"))
 		err = cmdEnv.RemoteCommand("tar -xvf " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + task.LinkId + ".tar.gz -C " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + task.LinkId)
 		if err != nil {
 			tools.Logger.Info(err)
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "50", "合并文件出错"))
 			return
 		}
 
 		// 链接
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "60%", "链接文件"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "60", "链接文件"))
 		err = cmdEnv.RemoteCommand("ln -sfn " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/" + task.LinkId + " " + project.ReleaseTo + path.Base(project.DeployFrom))
 		if err != nil {
 			tools.Logger.Info(err)
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "60", "链接文件出错"))
+
 			return
 		}
 
 		// 删除gz包
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "70%", "删除远程压缩包"))
+		websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "70", "删除远程压缩包"))
 		err = cmdEnv.RemoteCommand("rm -rf " + project.ReleaseLibrary + path.Base(project.DeployFrom) + "/*.tar.gz")
 		if err != nil {
 			tools.Logger.Info(err)
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "60", "删除远程压缩包出错"))
+
 			return
 		}
 
 		// 部署后命令
 		if project.PostRelease != "" {
-			websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "80%", "执行部署后命令"))
+			websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "80", "执行部署后命令"))
 			cmds := strings.Split(strings.TrimSpace(project.PostRelease), "\r\n")
 			for _, cmd := range cmds {
 				err := cmdEnv.RemoteCommand(cmd)
@@ -563,14 +582,14 @@ func listDeploy(project *models.Project, task *models.Task) (err error) {
 	}
 
 	// 删除文件包
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "90%", "删除本地压缩包"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "90", "删除本地压缩包"))
 	err = os.Remove(destFile)
 	if err != nil {
 		tools.Logger.Info(err.Error())
 		return
 	}
 
-	websocket.Broadcast(websocket.Conn, fmt.Sprintf("progress:%d:%s:%s", task.Id, "100%", "完成"))
+	websocket.Broadcast(fmt.Sprintf("progress:%d:%s:%s", task.Id, "100", "完成"))
 
 	return
 }

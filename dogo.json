@@ -1,0 +1,10 @@
+{
+    "WorkingDir": "{GOPATH}/src/gopub/",
+    "SourceDir": [
+        "{GOPATH}/src/gopub"
+    ],
+    "SourceExt": [".go",".html",".json"],
+    "BuildCmd": "",
+    "RunCmd": "{GOPATH}/src/gopub/gopub",
+    "Decreasing": 1
+}

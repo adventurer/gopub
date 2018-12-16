@@ -2,8 +2,8 @@ package main
 
 import (
 	"gopub/models"
+	"gopub/web/middleware"
 	"gopub/web/routes"
-	"gopub/websocket"
 
 	"github.com/kataras/iris"
 	"github.com/kataras/iris/middleware/logger"
@@ -38,19 +38,25 @@ func main() {
 	App.Favicon("./favicon.ico")
 
 	App.Use(customLogger)
+	App.Use(middleware.AccessOrigin)
 
 	// App.Logger().SetLevel("debug")
 
 	// Load the template files.
-	tmpl := iris.HTML("./html/views", ".html").Layout("layouts/layout.html").Reload(true)
-	App.RegisterView(tmpl)
+	// tmpl := iris.HTML("./html/views", ".html").Layout("layouts/layout.html").Reload(true)
+	// App.RegisterView(tmpl)
 
 	route := new(routes.Routes)
 	route.InitRoute(App)
 
-	App.StaticWeb("/assets", "./html/assets")
+	App.StaticWeb("/", "./html/vue")
+	// staticData, err := Asset("./html/vue")
+	// if err != nil {
+	// 	panic(err)
+	// }
+	// App.StaticEmbedded("/", "./html/vue", Asset, AssetNames)
 
-	websocket.SetupWebsocket(App)
+	// websocket.SetupWebsocket(App)
 
 	App.Run(iris.Addr(models.AppConfig.Listen), iris.WithConfiguration(iris.Configuration{
 		DisableStartupLog:                 false,

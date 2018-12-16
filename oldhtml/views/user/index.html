@@ -1,0 +1,50 @@
+<div class="row clearfix">
+    <div class="col-12">
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">用户列表</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive table_e2">
+                        <table class="table table-hover table-vcenter text-nowrap mb-0">
+                            <thead>
+                                <tr>
+                                    <th>用户名</th>                                    
+                                    <th>注册时间</th>                                    
+                                    <th>角色</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{range $k,$v := .list}}
+                                <tr>
+                                    <td>
+                                        <span class="c_name">{{$v.Username}}</span>
+                                    </td>
+                                    <td>
+                                        <span class="phone">{{$v.CreatedAt}}</span>
+                                    </td>                                   
+                                    <td>
+                                        {{if eq $v.Role 2}}
+                                        管理
+                                        {{else if eq $v.Role 1}}
+                                        开发
+                                        {{end}}
+                                    </td>
+                                    <td>               
+                                        <a href="/user/active?role=1&id={{$v.Id}}"><button type="button" class="btn btn-primary btn-sm" title="Edit">设为开发</button></a>                             
+                                        <a href="/user/active?role=2&id={{$v.Id}}"><button type="button" class="btn btn-primary btn-sm" title="Edit">设为管理</button></a>                             
+                                        <a href="/user/del?id={{$v.Id}}"><button type="button" class="btn btn-danger btn-sm" title="Delete"><i class="fa fa-times-circle"></i></button></a>
+                                        
+                                    </td>
+                                </tr>
+                                {{end}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+</div>

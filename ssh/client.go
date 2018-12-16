@@ -81,7 +81,7 @@ func (c *defaultClient) Connect() (clientID string, err error) {
 	tools.Logger.Infof("connect server ssh -p %d %s@%s\n", c.node.Port, c.node.User, c.node.Host)
 	client[clientID], err = ssh.Dial("tcp", fmt.Sprintf("%s:%d", c.node.Host, c.node.Port), c.clientConfig)
 	if err != nil {
-		websocket.Broadcast(websocket.Conn, fmt.Sprintf("ssh连接失败，请检查是否为服务器添加公钥:%s:%d", c.node.Host, c.node.Port))
+		websocket.Broadcast(fmt.Sprintf("ssh连接失败，请检查是否为服务器添加公钥:%s:%d", c.node.Host, c.node.Port))
 		tools.Logger.Infof("connect server err with:%s", err)
 		return "", err
 	}
@@ -212,11 +212,11 @@ func (c *defaultClient) UploadFile(clientID, sourceFile, target string, task mod
 		}
 		if (float32(end)/float32(len(data))*100)-tmp > 1.00 {
 			// log.Println(float32(end)/float32(len(data))*100, "-", tmp, "=", float32(end)/float32(len(data))*100-tmp)
-			websocket.Broadcast(websocket.Conn, fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
+			websocket.Broadcast(fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
 			tmp = float32(end) / float32(len(data)) * 100
 		}
 		if end == len(data) {
-			websocket.Broadcast(websocket.Conn, fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
+			websocket.Broadcast(fmt.Sprintf("upload:%s@%d:%d:%d:%d", c.node.Host, c.node.Port, task.Id, end, len(data)))
 		}
 
 	}

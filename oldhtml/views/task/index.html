@@ -1,0 +1,299 @@
+<div class="row clearfix">
+    <div class="col-12">
+        <form class="card" action="">
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="form-group col-auto">
+                        <select name="id" class="custom-select">
+                            <option value="">选择项目</option>
+                            {{range $k,$v := .project}}
+                            <option value="{{$v.Id}}" {{if eq $v.Id $.id}}selected{{end}}>{{$v.Name}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <div class="form-group col-8">
+                        <div class="input-group">
+                            <input name="title" type="text" class="form-control" placeholder="Search for..." value="{{.title}}">
+                            <span class="input-group-append"><button class="btn btn-primary" type="submit">Go!</button></span>
+                        </div>
+                    </div>
+                    <div class="form-group col-auto">
+                        <a href="/task/choose" class="btn btn-sm btn-primary">新建上线单</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<div class="row clearfix mb-5">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body table-responsive">
+                <table class="table table-hover table-vcenter text-nowrap">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="text-center w-1"><i class="icon-people">#</i></th>
+                            <th>项目</th>
+                            <th>上线标题</th>
+                            <th>文件列表</th>
+                            <th>发布进度</th>
+                            <th>版本</th>
+                            <th>部署</th>
+                            <th>审核</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{range $k,$v := .tasklist}}
+                        <tr id="task_{{$v.Task.Id}}">
+                            <td class="text-center">
+                                <span class="tag tag-purple mb-1">{{$v.Task.Id}}</span>   
+                                <div><span class="tag"><span class="tag-avatar avatar" style="background-image: url(../assets/images/xs/avatar7.jpg )"></span>{{$v.Username}}</span></div>
+                            </td>
+                            <td>
+                                <div>
+                                    {{$v.Project}}
+                                </div>
+                                <div class="small text-muted">上线方式: {{if eq $v.Task.FileTransmissionMode 1}}<span class="badge badge-success">全量</span>{{else}}<span
+                                        class="badge badge-success">列表</span>{{end}}</div>
+                            </td>
+                            <td>
+                                <div>
+                                    <p style="width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{$v.Task.Title}}</p>
+                                </div>
+                                <div class="small text-muted">发布于: {{$v.Task.CreatedAt}}</div>
+                            </td>
+                            <td>
+                                <div style="position:relative;" class="taskFiles">
+                                    <textarea class="form-control" rows="2" readonly>{{$v.Task.FileList}}</textarea>
+                                    <i style="position:absolute;top:2px;right:2px;" class="fa fa-window-maximize" data-toggle="tooltip" title="" data-original-title="fa fa-window-maximize"></i>
+                                </div>
+                            </td>
+                            <td id="upload_{{$v.Task.Id}}">
+                                {{if eq $v.Task.Status 3}}
+                                <div class="clearfix">
+                                        <div class="float-left"><strong id="progress-text">100%</strong></div>
+                                        <div class="float-right"><small class="text-muted">
+                                                <div id="text-info" class="badge badge-info">完成</div>
+                                            </small></div>
+                                    </div>
+                                    <div class="progress progress-xs">
+                                        <div id="progress-bar" class="progress-bar bg-red" role="progressbar" style="width: 100%"
+                                            aria-valuenow="36" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                {{else}}
+                                <div class="clearfix">
+                                        <div class="float-left"><strong id="progress-text">0%</strong></div>
+                                        <div class="float-right"><small class="text-muted">
+                                                <div id="text-info" class="badge badge-info">新建</div>
+                                            </small></div>
+                                    </div>
+                                    <div class="progress progress-xs">
+                                        <div id="progress-bar" class="progress-bar bg-red" role="progressbar" style="width: 0%"
+                                            aria-valuenow="36" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                {{end}}
+                                
+                                
+                                
+                                
+                            </td>
+
+                            <td>
+                                <div class="small text-muted">{{$v.Task.CommitId}}</div>
+                                <div>{{$v.Task.LinkId}}</div>
+                            </td>
+                            <td>
+                                
+                                {{if eq $v.Task.Status 3}}
+                                <i class="fa fa-thumbs-up" data-toggle="tooltip" title="" data-original-title="搞定"></i>
+                                {{else}}
+                                <a onclick="taskDeploy('{{$v.Task.Id}}')" class="tag tag-green" href="javascript:;">部署</a>
+                                <a class="tag tag-red sureToGo" href="/task/del?id={{$v.Task.Id}}">删除</a>
+                                {{end}}
+                                
+                            </td>
+                            <td>
+                                {{if ne $v.Task.Status 3}}
+                                    {{if eq $.userrole 2}}
+                                    <span class="tag">
+                                            通过
+                                        <a href="/task/audit?id={{$v.Task.Id}}&audit=0" class="tag-addon tag-green">{{if eq $v.Task.Audit 0}}<i class="fe fe-check"></i>{{end}}  </a>
+                                    </span>
+
+                                    <span class="tag">
+                                            拒绝
+                                        <a href="/task/audit?id={{$v.Task.Id}}&audit=2" class="tag-addon tag-green">{{if eq $v.Task.Audit 2}}<i class="fe fe-check"></i>{{end}}  </a>
+                                    </span>
+
+                                    {{else}}
+                                        {{if eq $v.Task.Audit 0}}
+                                            
+                                            <a class="tag" href="javsscript:;">审核通过</a>
+
+                                        {{else if eq $v.Task.Audit 1}}
+                                            
+                                            <a class="tag" href="javsscript:;">审核中</a>
+
+                                        {{else if eq $v.Task.Audit 2}}
+                                            
+                                            <a class="tag" href="javsscript:;">审核拒绝</a>
+                                        {{end}}
+                                    {{end}}
+                                {{end}}
+                            </td>
+                        </tr>
+                        {{end}}
+                    </tbody>
+                </table>
+
+                <div class="text-center float-right">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            {{if ne .page1 0}}
+                            <li class="page-item mr-1"><a class="btn btn-primary btn-sm" href="?id={{.id}}&page={{.page1}}&title={{.title}}">上翻</a></li>
+
+                            {{end}}
+                            <li class="page-item ml-1"><a class="btn btn-primary btn-sm" href="?id={{.id}}&page={{.page2}}&title={{.title}}">下翻</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row clearfix fixed-bottom mb-2">
+    <div id="ouput-collapsed" class="card card-collapsed">
+        <div class="card-status bg-teal"></div>
+        <div class="card-header">
+            <h3 class="card-title">发布细节</h3>
+            <div class="card-options">
+                <a href="w-data.html#" class="card-options-collapse" data-toggle="card-collapse"><i class="fe fe-chevron-down"></i></a>
+                <a href="w-data.html#" class="card-options-fullscreen" data-toggle="card-fullscreen"><i class="fe fe-maximize"></i></a>
+                <a href="w-data.html#" class="card-options-remove" data-toggle="card-remove"><i class="fe fe-x"></i></a>
+            </div>
+        </div>
+        <div class="card-body">
+            <textarea id="output" rows="10" readonly style="resize:none;" class="form-control no-resize" placeholder="Enter here for tweet..."></textarea>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    function taskDeploy(id) {
+        if (confirm("确定发布？")) {
+            $.ajax({
+                type: "GET",
+                url: "/task/deploy",
+                data: {
+                    id: id
+                },
+                dataType: "json",
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+        }
+    }
+</script>
+
+
+<script src="/iris-ws.js"></script>
+<script>
+    var scheme = document.location.protocol == "https:" ? "wss" : "ws";
+    var port = document.location.port ? (":" + document.location.port) : "";
+    // see app.Get("/echo", ws.Handler()) on main.go
+    var wsURL = scheme + "://" + document.location.hostname + port + "/echo";
+
+    var input = document.getElementById("input");
+    var output = document.getElementById("output");
+    var fileupload = document.getElementById("fileupload")
+    var compress = document.getElementById("compress")
+
+    // Ws comes from the auto-served '/iris-ws.js'
+    console.log(wsURL)
+    var socket = new Ws(wsURL)
+    socket.OnConnect(function () {
+        output.innerHTML += "Status: Connected\n";
+    });
+
+    socket.OnDisconnect(function () {
+        output.innerHTML += "Status: Disconnected\n";
+    });
+
+    // read events from the server
+    socket.On("chat", function (msg) {
+        if (msg.indexOf("progress") == 0) {
+            progress = msg.split(":")
+            $("#task_"+progress[1]+" #progress-bar").attr("style","width:"+progress[2])
+            $("#task_"+progress[1]+" #progress-text").text(progress[2])
+            $("#task_"+progress[1]+" #text-info").text(progress[3])
+
+            
+        } else if (msg.indexOf("upload") == 0) {
+            console.log("append")
+            progress = msg.split(":")
+            console.log(progress)
+            var template = `
+                            <div data="up-progress_${progress[1]}">
+                                <div class="clearfix">
+                                    <div class="float-left"><strong id="up-progress-text">${progress[1]}:${progress[3]/progress[4]*100}%</strong></div>
+                                </div>
+                                <div class="progress progress-xs">
+                                    <div class="progress-bar bg-orange" role="progressbar" style="width: ${progress[3]/progress[4]*100}%"
+                                        aria-valuenow="36" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                            `
+            console.log("#upload_"+progress[2]+" [data='up-progress_"+progress[1]+"']")
+            if ($("#upload_"+progress[2]+" [data='up-progress_"+progress[1]+"']").length) {
+                $("#upload_"+progress[2]+" [data='up-progress_"+progress[1]+"']"+" #up-progress-text").text(progress[1]+":"+(progress[3]/progress[4]*100).toFixed(2)+"%")
+                $("#upload_"+progress[2]+" [data='up-progress_"+progress[1]+"']"+" .progress-bar").attr("style","width:"+(progress[3]/progress[4]*100).toFixed(2)+"%")
+            }else{
+                $("#upload_"+progress[2]).append(template)
+            }
+        } else {
+            addMessage(msg);
+        }
+        var obj = document.getElementById("output");
+        obj.scrollTop = obj.scrollHeight; // good
+    });
+
+    function send() {
+        addMessage("Me: " + input.value); // write ourselves
+        socket.Emit("chat", input.value); // send chat event data to the websocket server
+        input.value = ""; // clear the input
+    }
+
+    function addMessage(msg) {
+        if ($("#card-collapsed")) {
+            $("#ouput-collapsed").removeClass("card-collapsed")
+        }
+        output.innerHTML += msg + "\n";
+    }
+
+    function taskShift(e) {
+        if (!confirm("确认提交？")) {
+            return false
+        }
+        $(e).attr('disabled', 'true')
+        $.ajax({
+            type: "GET",
+            url: '/task/shift?id=' + $(e).data("tid"),
+            data: {
+                username: $("#username").val(),
+                content: $("#content").val()
+            },
+            dataType: "json",
+            success: function (data) {
+                document.getElementById("publish_bar").style = "width:100%"
+            }
+        });
+    }
+</script>
