@@ -31,7 +31,7 @@
                                 <th>用户&主机</th>
                                 <th>主机路径</th>
                                 <th>本地仓库路径</th>
-                                <th>是否需要审核</th>
+                                <th>开启审核</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -40,11 +40,11 @@
                             <tr>
                                 <td>
                                     {{if eq $v.Level 1}}
-                                    <span class="tag tag-green">开发</span>
+                                    <span class="text-green"><i class="fa fa fa-eercast fa-2x"></i></span>
                                     {{else if eq $v.Level 2}}
-                                    <span class="tag tag-orange">测试</span>
+                                    <span class="text-orange"><i class="fa fa fa-eercast fa-2x"></i></span>
                                     {{else if eq $v.Level 3}}
-                                    <span class="tag tag-red">生产</span>
+                                    <span class="text-red"><i class="fa fa fa-eercast fa-2x"></i></span>
                                     {{end}}
                                 </td>
                                 <td>
@@ -63,17 +63,8 @@
                                         {{$v.DeployFrom}}
                                 </td>
                                 <td class="">
-                                    {{if eq $v.Audit 0}}
-                                    <span class="tag">
-                                            关闭 
-                                        <a href="/project/audit?id={{$v.Id}}&audit=1" class="tag-addon tag-green"><i class="fa fa-check"></i></a>
-                                    </span>
-                                    {{else if eq $v.Audit 1}}
-                                    <span class="tag">
-                                            开启 
-                                        <a href="/project/audit?id={{$v.Id}}&audit=0" class="tag-addon tag-green"><i class="fa fa-ban"></i></a>
-                                    </span>
-                                    {{end}}
+                                    <a href="/project/audit?id={{$v.Id}}&audit=1"><button type="button" class="btn btn-success btn-sm">{{if eq $v.Audit 1}}<i class="fe fe-check mr-2"></i>{{end}}开启</button></a>
+                                    <a href="/project/audit?id={{$v.Id}}&audit=0"><button type="button" class="btn btn-success btn-sm">{{if eq $v.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}关闭</button></a>
                                 </td>
                                 <td>
                                     <a href="javascript:;" onclick="projectInit('{{$v.Id}}')" ><span class="badge badge-danger">初始化</span></a> 

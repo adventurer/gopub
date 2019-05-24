@@ -40,10 +40,12 @@
                             <th>项目</th>
                             <th>上线标题</th>
                             <th>文件列表</th>
-                            <th>发布进度</th>
+                            <th width="300px">发布进度</th>
                             <th>版本</th>
                             <th>部署</th>
                             <th>审核</th>
+
+
                         </tr>
                     </thead>
                     <tbody>
@@ -62,7 +64,7 @@
                             </td>
                             <td>
                                 <div>
-                                    <p style="width:200px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">{{$v.Task.Title}}</p>
+                                    {{$v.Task.Title}}
                                 </div>
                                 <div class="small text-muted">发布于: {{$v.Task.CreatedAt}}</div>
                             </td>
@@ -111,36 +113,23 @@
                                 {{if eq $v.Task.Status 3}}
                                 <i class="fa fa-thumbs-up" data-toggle="tooltip" title="" data-original-title="搞定"></i>
                                 {{else}}
-                                <a onclick="taskDeploy('{{$v.Task.Id}}')" class="tag tag-green" href="javascript:;">部署</a>
-                                <a class="tag tag-red sureToGo" href="/task/del?id={{$v.Task.Id}}">删除</a>
+                                <button onclick="taskDeploy('{{$v.Task.Id}}')" type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-paper-plane"></i></button>
+                                <a href="/task/del?id={{$v.Task.Id}}"><button type="button" class="btn btn-icon btn-primary btn-purple"><i class="fa fa-trash-o"></i></button></a>
                                 {{end}}
                                 
                             </td>
                             <td>
                                 {{if ne $v.Task.Status 3}}
                                     {{if eq $.userrole 2}}
-                                    <span class="tag">
-                                            通过
-                                        <a href="/task/audit?id={{$v.Task.Id}}&audit=0" class="tag-addon tag-green">{{if eq $v.Task.Audit 0}}<i class="fe fe-check"></i>{{end}}  </a>
-                                    </span>
-
-                                    <span class="tag">
-                                            拒绝
-                                        <a href="/task/audit?id={{$v.Task.Id}}&audit=2" class="tag-addon tag-green">{{if eq $v.Task.Audit 2}}<i class="fe fe-check"></i>{{end}}  </a>
-                                    </span>
-
+                                    <a href="/task/audit?id={{$v.Task.Id}}&audit=0"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 0}}<i class="fe fe-check mr-2"></i>{{end}}通过</button></a>
+                                    <a href="/task/audit?id={{$v.Task.Id}}&audit=2"><button type="button" class="btn btn-success">{{if eq $v.Task.Audit 2}}<i class="fe fe-check mr-2"></i>{{end}}拒绝</button></a>
                                     {{else}}
                                         {{if eq $v.Task.Audit 0}}
-                                            
-                                            <a class="tag" href="javsscript:;">审核通过</a>
-
+                                            审核通过
                                         {{else if eq $v.Task.Audit 1}}
-                                            
-                                            <a class="tag" href="javsscript:;">审核中</a>
-
+                                            审核中
                                         {{else if eq $v.Task.Audit 2}}
-                                            
-                                            <a class="tag" href="javsscript:;">审核拒绝</a>
+                                            审核拒绝
                                         {{end}}
                                     {{end}}
                                 {{end}}
